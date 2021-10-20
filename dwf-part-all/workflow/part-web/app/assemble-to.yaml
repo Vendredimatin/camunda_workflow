@@ -1,0 +1,34 @@
+config:
+  ignore:
+  info:
+    part-web:
+      name: app
+      cname: 应用端
+      forms: {}
+      operations:
+        WfProcessInstance.vue:
+          cname: "流程实例"
+        WfProcessTask.vue:
+          cname: "待办事项"
+        WfProcessTemplate.vue:
+          cname: "流程模版"
+        WfProcessAdmin.vue: 
+          cname: "流程监控"
+        WfProcessModeler.vue: 
+          cname: "流程建模"
+        LaunchProcess.vue: 
+          cname: "发起流程"
+        OpenObjTask.vue:
+          cname: "打开流程"
+        # sub_components/orgUserSelector.vue: orgUserSelector
+        # sub_components/ruleEditPanel.vue: ruleEditPanel
+        # sub_components/setPropertySheet.vue: setPropertySheet
+        # sub_components/UserSlector.vue: UserSlector
+        # sub_components/WfProcessComments.vue: setPropertySheet
+        # wf_editor/WfEdit.vue: WfEdit
+        # wf_editor/WfAdminEdit.vue: WfAdminEdit
+        # bpmn_editor/WfAdminEdit.vue: BPMNEdit
+      dependencies: 
+        bpmn-js: ^8.0.0
+        bpmn-moddle: ^7.0.4
+        bpmn-js-properties-panel: ^0.38.0

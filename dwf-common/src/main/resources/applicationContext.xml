@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context
+		                   http://www.springframework.org/schema/context/spring-context.xsd
+		                   http://www.springframework.org/schema/beans
+		                   http://www.springframework.org/schema/beans/spring-beans.xsd ">
+
+	<!-- ureport2 -->
+	<!--	<import resource="classpath:ureport-console-context.xml" />-->
+	<!--	<bean id="propertyConfigurer" parent="ureport.props">-->
+	<!--		<property name="location">-->
+	<!--			<value>classpath:application.properties</value>-->
+	<!--		</property>-->
+	<!--	</bean>-->
+
+	<!-- <context:property-placeholder location="classpath:sysconfig.properties" /> -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:application.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- data source used for ordinary Java app -->
+	<!-- 请参考reference: https://segmentfault.com/a/1190000005829384 -->
+	<!-- reference: http://commons.apache.org/proper/commons-dbcp/configuration.html -->
+	<bean id="RepositoryDBDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${db.jdbc.driverClassName}" />
+		<property name="url" value="${spring.datasource.url}" />
+		<property name="username" value="${spring.datasource.username}" />
+		<property name="password" value="${spring.datasource.password}" />
+		<property name="maxWait" value="${db.jdbc.maxWait}" />
+		<property name="maxActive" value="${db.jdbc.maxActive}" />
+		<property name="maxIdle" value="${db.jdbc.maxIdle}" />
+		<property name="minIdle" value="${db.jdbc.minIdle}" />
+		<property name="logAbandoned" value="${db.jdbc.logAbandoned}" />
+		<property name="initialSize" value="${db.jdbc.initialSize}" />
+		<property name="removeAbandoned" value="${db.jdbc.removeAbandoned}" />
+		<property name="removeAbandonedTimeout" value="${db.jdbc.removeAbandonedTimeout}" />
+		<property name="poolPreparedStatements" value="${db.jdbc.poolPreparedStatements}" />
+		<property name="testOnBorrow" value="${db.jdbc.testOnBorrow}" />
+		<property name="validationQuery" value="${db.jdbc.validationQuery}" />
+	</bean>
+
+</beans>

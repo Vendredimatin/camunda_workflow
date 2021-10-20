@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 引入springboot自带的配置 -->
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!-- 设置变量，定义后可通过${}读取 -->
+    <springProperty scope="context" name="LOG_PATH" source="logHome" defaultValue="log"/>
+    <springProperty scope="context" name="SCRIPT_LOG_PREFIX" source="scriptLogPrefix" defaultValue="script"/>
+
+    <!-- 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 -->
+    <appender name="ERROR-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 当发生滚动时，决定RollingFileAppender的行为，涉及文件移动和重命名 -->
+        <!-- TimeBasedRollingPolicy根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 按天回滚 daily -->
+            <!-- log.dir 在maven profile里配置 -->
+            <fileNamePattern>${LOG_PATH}/error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 日志最大的历史 60天 -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <!-- 只打印error日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="SCRIPT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${SCRIPT_LOG_PREFIX}-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <!-- 打印info/warn/error日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <appender name="INFO-SCRIPT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/script-info-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <!-- 打印info/warn/error日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="ERROR-SCRIPT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/script-error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <!-- 打印info/warn/error日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 设置日志级别为info -->
+    <!-- additivity=true，表示将日志输出出来，false则不会输出日志，但是appender仍可接收到输出的日志message -->
+    <!-- additivity是否向上级(root)传递，传递则采用root的输出源，否则不输出日志 -->
+    <logger name="edu.thss.platform.service.omf.ScriptExecuterService" level="INFO" additivity="false">
+        <!-- 指定自定义的appender来处理 -->
+        <appender-ref ref="SCRIPT" />
+        <appender-ref ref="INFO-SCRIPT" />
+        <appender-ref ref="ERROR-SCRIPT" />
+        <appender-ref ref="ERROR-FILE" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <logger name="edu.thss.platform.service.wfprocess.runtime.server.WfScriptExecuterService" level="INFO" additivity="false">
+        <appender-ref ref="SCRIPT" />
+        <appender-ref ref="INFO-SCRIPT" />
+        <appender-ref ref="ERROR-SCRIPT" />
+        <appender-ref ref="ERROR-FILE" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+
+	<!-- 调整个别类或者包的日志级别 -->
+    <logger name="edu.thss.MyApp" level="ERROR"/>
+
+	<root level="INFO">
+        <!-- 这两个是springboot自带的appender -->
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE" />
+		<!-- 将error级别的bug额外输出到一个地方 -->
+		<appender-ref ref="ERROR-FILE" />
+	</root>
+
+ </configuration>

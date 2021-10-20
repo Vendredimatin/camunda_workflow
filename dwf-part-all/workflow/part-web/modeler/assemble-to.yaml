@@ -1,0 +1,24 @@
+config:
+  ignore:
+  info:
+    part-web:
+      name: modeler
+      cname: 建模端
+      forms: {}
+      operations:
+        WfProcessInstance.vue:
+          cname: 流程实例
+        WfProcessTask.vue:
+          cname: 待办事项
+        WfProcessTemplate.vue:
+          cname: 流程模版
+        WfProcessAdmin.vue: 
+          cname: 流程监控
+        WfProcessModeler.vue: 
+          cname: 流程建模
+        LaunchProcess.vue: 
+          cname: 发起流程
+        OpenObjTask.vue:
+          cname: 打开流程
+      dependencies:
+        vue-calendar-component: ^2.8.2

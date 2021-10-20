@@ -1,0 +1,25 @@
+.custom-tooltip {
+    position: absolute;
+    min-width: 150px;
+    min-height: 70px;
+    max-width: 400px;
+    max-height: 300px;
+    border: 1px solid cornflowerblue;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity 1s;
+    background: #c8c8c8;
+}
+
+.custom-tooltip.ag-tooltip-hiding {
+    opacity: 0;
+}
+
+.custom-tooltip p {
+    margin: 5px;
+    white-space: nowrap;
+}
+
+.custom-tooltip p:first-of-type {
+    font-weight: bold;
+}

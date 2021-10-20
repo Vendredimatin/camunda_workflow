@@ -1,0 +1,17 @@
+#Intellij idea
+.idea/
+/idea/
+*.ipr
+*.iml
+*.iws
+
+#package file
+dwf-modeler/target/dwf-modeler-1.0-SNAPSHOT.jar
+dwf-app/target/dwf-app-1.0-SNAPSHOT.jar
+#maven ignore
+target/
+build/
+
+node_modules/
+
+log/

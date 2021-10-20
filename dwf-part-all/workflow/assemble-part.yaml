@@ -1,0 +1,64 @@
+CodePart:
+  part:
+    name: workflow
+  part-svc:
+    app:
+      cname: "\u5E94\u7528\u7AEF"
+      name: app
+    common:
+      cname: common
+      name: common
+    modeler:
+      cname: "\u5EFA\u6A21\u7AEF"
+      name: modeler
+  part-web:
+    app:
+      cname: "\u5E94\u7528\u7AEF"
+      dependencies:
+        bpmn-js: ^8.0.0
+        bpmn-js-properties-panel: ^0.38.0
+        bpmn-moddle: ^7.0.4
+      forms: {}
+      name: app
+      operations:
+        LaunchProcess.vue:
+          cname: "\u53D1\u8D77\u6D41\u7A0B"
+        OpenObjTask.vue:
+          cname: "\u6253\u5F00\u6D41\u7A0B"
+        WfProcessAdmin.vue:
+          cname: "\u6D41\u7A0B\u76D1\u63A7"
+        WfProcessInstance.vue:
+          cname: "\u6D41\u7A0B\u5B9E\u4F8B"
+        WfProcessModeler.vue:
+          cname: "\u6D41\u7A0B\u5EFA\u6A21"
+        WfProcessTask.vue:
+          cname: "\u5F85\u529E\u4E8B\u9879"
+        WfProcessTemplate.vue:
+          cname: "\u6D41\u7A0B\u6A21\u7248"
+    common:
+      cname: common
+      dependencies: {}
+      forms: {}
+      name: common
+      operations: {}
+    modeler:
+      cname: "\u5EFA\u6A21\u7AEF"
+      dependencies:
+        vue-calendar-component: ^2.8.2
+      forms: {}
+      name: modeler
+      operations:
+        LaunchProcess.vue:
+          cname: "\u53D1\u8D77\u6D41\u7A0B"
+        OpenObjTask.vue:
+          cname: "\u6253\u5F00\u6D41\u7A0B"
+        WfProcessAdmin.vue:
+          cname: "\u6D41\u7A0B\u76D1\u63A7"
+        WfProcessInstance.vue:
+          cname: "\u6D41\u7A0B\u5B9E\u4F8B"
+        WfProcessModeler.vue:
+          cname: "\u6D41\u7A0B\u5EFA\u6A21"
+        WfProcessTask.vue:
+          cname: "\u5F85\u529E\u4E8B\u9879"
+        WfProcessTemplate.vue:
+          cname: "\u6D41\u7A0B\u6A21\u7248"

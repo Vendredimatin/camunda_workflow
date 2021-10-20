@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>edu.thss.platform</groupId>
+    <artifactId>dwf3</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>dwf-app</module>
+        <module>dwf-modeler</module>
+        <module>dwf-common</module>
+        <module>dwf-part-all/part01/part-svc/app</module>
+        <module>dwf-part-all/part01/part-svc/modeler</module>
+        <module>dwf-part-all/part01/part-svc/common</module>
+        <module>dwf-part-all/workflow/part-svc/app</module>
+        <module>dwf-part-all/workflow/part-svc/modeler</module>
+        <module>dwf-part-all/workflow/part-svc/common</module>
+    </modules>
+</project>

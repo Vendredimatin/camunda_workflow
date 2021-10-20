@@ -1,0 +1,117 @@
+{
+    "data": {
+        "formName": "1",
+        "elements": [
+            {
+                "self": {
+                    "elementType": "addin_row",
+                    "properties": {
+                        "style": "",
+                        "gutter": 0,
+                        "type": "flex",
+                        "align": "middle",
+                        "justify": "center"
+                    }
+                },
+                "elements": [
+                    {
+                        "self": {
+                            "elementType": "addin_col",
+                            "properties": {
+                                "span": "5",
+                                "offset": 0,
+                                "push": 0,
+                                "pull": 0,
+                                "style": ""
+                            }
+                        },
+                        "elements": [
+                            {
+                                "self": {
+                                    "elementType": "addin_NumberInput",
+                                    "properties": {
+                                        "max": null,
+                                        "min": null,
+                                        "value": 0,
+                                        "step": null,
+                                        "size": null,
+                                        "disabled": false,
+                                        "placeholder": "数字输入框",
+                                        "readOnly": false,
+                                        "editable": true,
+                                        "precision": null,
+                                        "label": "开始时间",
+                                        "name": "extractStartTime",
+                                        "style": null
+                                    }
+                                },
+                                "elements": []
+                            }
+                        ]
+                    },
+                    {
+                        "self": {
+                            "elementType": "addin_col",
+                            "properties": {
+                                "span": "5",
+                                "offset": 0,
+                                "push": 0,
+                                "pull": 0,
+                                "style": ""
+                            }
+                        },
+                        "elements": [
+                            {
+                                "self": {
+                                    "elementType": "addin_NumberInput",
+                                    "properties": {
+                                        "max": null,
+                                        "min": null,
+                                        "value": 0,
+                                        "step": null,
+                                        "size": null,
+                                        "disabled": false,
+                                        "placeholder": "数字输入框",
+                                        "readOnly": false,
+                                        "editable": true,
+                                        "precision": null,
+                                        "label": "错误码",
+                                        "name": "wrongNum",
+                                        "style": null
+                                    }
+                                },
+                                "elements": []
+                            }
+                        ]
+                    },
+                    {
+                        "self": {
+                            "elementType": "addin_col",
+                            "properties": {
+                                "span": "6",
+                                "offset": 0,
+                                "push": 0,
+                                "pull": 0,
+                                "style": ""
+                            }
+                        },
+                        "elements": [
+                            {
+                                "self": {
+                                    "elementType": "addin_Label",
+                                    "properties": {
+                                        "text": "提示信息...",
+                                        "label": "内存大小",
+                                        "name": "memory",
+                                        "style": ""
+                                    }
+                                },
+                                "elements": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

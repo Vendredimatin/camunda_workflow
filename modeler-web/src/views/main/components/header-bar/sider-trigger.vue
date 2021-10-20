@@ -1,0 +1,63 @@
+<template>
+  <a @click="handleChange" type="text" :class="['sider-trigger-a', collapsed ? 'collapsed' : '']">
+    <Icon v-show="!iconfont" :type="icon" :size="size"/>
+    <i v-show="iconfont && !collapsed" style="font-size: 12px;" class="iconfont">&#xe6b7;</i>
+    <i v-show="iconfont && collapsed" style="font-size: 12px;" class="iconfont">&#xe6b6;</i>
+  </a>
+</template>
+
+<script>
+  import "@/styles/component/iconfont.css";
+
+  export default {
+    name: "siderTrigger",
+    props: {
+      iconfont: {
+        type: Boolean,
+        default: false,
+      },
+      collapsed: Boolean,
+      icon: {
+        type: String,
+        default: "md-menu"
+      },
+      size: {
+        type: Number,
+        default: 14
+      }
+    },
+    methods: {
+      handleChange() {
+        console.log(this.collapsed)
+        this.$emit("on-change", !this.collapsed);
+      }
+    }
+  };
+</script>
+
+<style lang="less" scoped>
+  .trans {
+    transition: transform 0.2s ease;
+  }
+
+  @size: 40px;
+  .sider-trigger-a {
+    padding: 6px;
+    width: @size;
+    height: @size;
+    display: inline-block;
+    text-align: center;
+    color: #5c6b77;
+    margin-top: 12px;
+
+    i {
+      .trans;
+      vertical-align: top;
+    }
+
+    &.collapsed i {
+      transform: rotateZ(90deg);
+      .trans;
+    }
+  }
+</style>

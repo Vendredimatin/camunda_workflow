@@ -1,0 +1,9 @@
+config:
+  ignore:
+  info:
+    part-web:
+      name: common
+      cname: common
+      forms: {}
+      operations: {}
+      dependencies: {}

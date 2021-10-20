@@ -1,0 +1,1 @@
+export const entries = [{"name": "Calendar", "note": "我的日历", "path": "form/part01/Calendar.vue", "module": "form/multi", "icon": "md-reverse-camera"}]

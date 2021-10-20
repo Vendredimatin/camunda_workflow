@@ -1,0 +1,6 @@
+config:
+  ignore:
+  info:
+    part-svc:
+      name: common
+      cname: common

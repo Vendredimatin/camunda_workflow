@@ -1,0 +1,49 @@
+<template>
+    <section v-if="t_edit">
+        <Button style="margin-right: 10px" :type="args.type" :shape="args.shape ? 'circle' : null" @click="t_edit = false">取消</Button>
+        <Button :type="args.type" :shape="args.shape ? 'circle' : null" @click="t_edit = false">保存</Button>
+    </section>
+    <section v-else>
+        <Button :type="args.type" :shape="args.shape ? 'circle' : null" @click="t_edit = true">编辑</Button> 
+    </section>
+</template>
+
+<script>
+const name = "OprDemo";
+export default {
+    name: name,
+    data() {
+        return {
+            name: name,
+
+            t_edit: false,
+
+            args: {
+                type: "default",
+                shape: false,
+                text: "新增"
+            }
+        }
+    },
+    methods: {
+        canShow() { return true },
+        setArgs(args) {
+            for (var i in args) {
+                this.args[i] = args[i];
+            }
+            return this;
+        },
+    }
+}
+</script>
+
+<style scoped>
+section {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+}
+p {
+  margin: 10px 0;
+}
+</style>

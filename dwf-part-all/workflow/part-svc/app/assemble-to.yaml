@@ -1,0 +1,6 @@
+config:
+  ignore:
+  info:
+    part-svc:
+      name: app
+      cname: 应用端
