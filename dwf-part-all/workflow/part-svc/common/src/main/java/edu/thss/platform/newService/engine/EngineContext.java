@@ -20,7 +20,7 @@ public class EngineContext {
         JSONObject requestBody = new JSONObject();
         requestBody.put("processName", processName);
         requestBody.put("bpmnXml", bpmnXml);
-        String url = "http://127.0.0.1:8888/camunda/depoly/deploy-process";
+        String url = "http://127.0.0.1:8888/camunda/deploy/deploy-process";
         ResponseEntity<String> response = new RestTemplateUtils().post(url, requestBody, String.class);
 
         System.out.println(response.getStatusCode());
@@ -31,7 +31,7 @@ public class EngineContext {
     public String launch(String deploymentId){
         JSONObject requestBody = new JSONObject();
         requestBody.put("deploymentId", deploymentId);
-        String url = "http://127.0.0.1:8888/camunda/depoly/launch-process";
+        String url = "http://127.0.0.1:8888/camunda/deploy/launch-process";
         ResponseEntity<String> response = new RestTemplateUtils().post(url, requestBody, String.class);
         System.out.println(response.getStatusCode());
 
@@ -57,11 +57,11 @@ public class EngineContext {
         return entity.getBody();
     }
 
-    public Map<String,String> getExtensionVariables(String processInstanceId, String taskDefinitionKey){
+    public Map<String,String> getExtensionVariables(String processDefinitionId, String taskDefinitionKey){
         JSONObject requestBody = new JSONObject();
-        requestBody.put("processInstanceId", processInstanceId);
+        requestBody.put("processDefinitionId", processDefinitionId);
         requestBody.put("taskDefinitionKey", taskDefinitionKey);
-        System.out.println(processInstanceId);
+        System.out.println(processDefinitionId);
         System.out.println(taskDefinitionKey);
         String url = "http://127.0.0.1:8888/camunda/deploy/get-extension-variables";
         ResponseEntity<Map> entity = RestTemplateUtils.post(url, requestBody, Map.class);

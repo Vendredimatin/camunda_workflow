@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Api(tags = {"工作流运行时"})
 @RestController
-@RequestMapping("/camunda/depoly")
+@RequestMapping("/camunda/deploy")
 public class DeployController {
 
     @Autowired
@@ -62,13 +62,15 @@ public class DeployController {
     @PostMapping(path = "get-extension-variables")
     public JsonObject getExtensionVariables(@ApiParam(value = "请求示例：\n```\n " +
             "{\n" +
-            "    \"processDefinitionId\":\"leave\",\n" +
-            "    \"taskDefinitionKey\":\"leave\",\n" +
+            "    \"processDefinitionId\":\"b9e68be1-3188-11ec-9ffe-32b49eea4695\",\n" +
+            "    \"taskDefinitionKey\":\"Activity_1mhc7ho\",\n" +
             "}\n```", required = true) @RequestBody Map<String, Object> param) {
         try {
             System.out.println(1);
             String processDefinitionId = (String)param.get("processDefinitionId");
             String taskDefinitionKey = (String)param.get("taskDefinitionKey");
+            System.out.println(processDefinitionId);
+            System.out.println(taskDefinitionKey);
             JsonObject jsonObject = deploymentService.getExtensionVariables(processDefinitionId, taskDefinitionKey);
             if(jsonObject != null){
                 return jsonObject;

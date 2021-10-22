@@ -90,10 +90,10 @@ public class Server {
         for (int i = 0; i < tasks.size(); i++){
             Map<String,String> task = tasks.get(i);
 
-            String processInstanceId = task.get("processInstanceId");
+            String processDefinitionId = task.get("processDefinitionId");
             String taskDefinitionKey = task.get("taskDefinitionKey");
 
-            Map<String,String> extensionVariables = engineContext.getExtensionVariables(processInstanceId, taskDefinitionKey);
+            Map<String,String> extensionVariables = engineContext.getExtensionVariables(processDefinitionId, taskDefinitionKey);
             if (extensionVariables != null){
                 for (Map.Entry<String,String> entry:extensionVariables.entrySet()){
                     task.put(entry.getKey(), entry.getValue());
@@ -101,7 +101,7 @@ public class Server {
             }
 
 
-            NewWfProcessInstance newWfProcessInstance = processInstanceDao.findByProcessInstanceId(processInstanceId);
+            NewWfProcessInstance newWfProcessInstance = processInstanceDao.findByProcessInstanceId(processDefinitionId);
             if(newWfProcessInstance != null) {
                 task.put("enClassInstanceId", newWfProcessInstance.getEnClassInstanceId());
                 ret.add(task);
