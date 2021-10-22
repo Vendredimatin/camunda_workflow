@@ -2,6 +2,8 @@ package edu.thss.platform.newService;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import edu.thss.platform.dao.wfprocess.NewWfProcessInstanceDao;
 import edu.thss.platform.dao.wfprocess.ReleasedWfProcessTemplateDao;
 import edu.thss.platform.domain.wfprocess.NewWfProcessInstance;
 import edu.thss.platform.domain.wfprocess.ReleasedWfProcessTemplate;
@@ -12,7 +14,11 @@ import edu.thss.platform.service.wfprocess.core.runtime.workitem.WorkitemInfoDes
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class Server {
@@ -24,6 +30,8 @@ public class Server {
 
     @Autowired
     ReleasedWfProcessTemplateDao releasedWfProcessTemplateDao;
+    @Autowired
+    NewWfProcessInstanceDao processInstanceDao;
 
     public NewWfProcessInstance createProcessInstance(String templateId, String enObjId) throws Exception {
         NewWfProcessInstance inst = new NewWfProcessInstance();
@@ -47,7 +55,8 @@ public class Server {
                                            String enClassInstanceId) throws Exception {
         NewWfProcessInstance instance = null;
 
-        String deploymentId = releasedWfProcessTemplateDao.findById(Long.parseLong(templateId)).get().getDeploymentId();
+
+        ReleasedWfProcessTemplate template= releasedWfProcessTemplateDao.findById(Long.parseLong(templateId)).get();
 
         if(enClassInstanceId==null || enClassInstanceId.equals("")){
 //          System.out.println("test:launch 1 基于模版发起流程，新生成实体类对象");
@@ -60,10 +69,11 @@ public class Server {
         }
 
         //下面还要写发起流程的情况
-        String processInstanceId = engineContext.launch(deploymentId);
-        if(!Strings.isNullOrEmpty(deploymentId)){
-            instance.setDeploymentId(deploymentId);
-        }
+        String processInstanceId = engineContext.launch(template.getDeploymentId());
+        instance.setProcessInstanceId(processInstanceId);
+        instance.setProcessName(template.getName());
+        instance.setDeploymentId(template.getDeploymentId());
+        processInstanceDao.save(instance);
 
         return instance;
     }
@@ -73,8 +83,31 @@ public class Server {
         return count;
     }
 
-    public List<JSONObject> getTaskList(String userName, String filerStatus, Integer pageIndex, Integer pageSize, String condition) {
-        List<JSONObject> taskList = engineContext.getTaskList(userName);
-        return taskList;
+    public List<Map<String,String>> getTaskList(String userName, String filerStatus, Integer pageIndex, Integer pageSize, String condition) {
+        List<Map<String,String>> tasks = engineContext.getTaskList(userName);
+
+        List<Map<String, String>> ret = new ArrayList<>();
+        for (int i = 0; i < tasks.size(); i++){
+            Map<String,String> task = tasks.get(i);
+
+            String processInstanceId = task.get("processInstanceId");
+            String taskDefinitionKey = task.get("taskDefinitionKey");
+
+            Map<String,String> extensionVariables = engineContext.getExtensionVariables(processInstanceId, taskDefinitionKey);
+            if (extensionVariables != null){
+                for (Map.Entry<String,String> entry:extensionVariables.entrySet()){
+                    task.put(entry.getKey(), entry.getValue());
+                }
+            }
+
+
+            NewWfProcessInstance newWfProcessInstance = processInstanceDao.findByProcessInstanceId(processInstanceId);
+            if(newWfProcessInstance != null) {
+                task.put("enClassInstanceId", newWfProcessInstance.getEnClassInstanceId());
+                ret.add(task);
+            }
+        }
+
+        return ret;
     }
 }

@@ -48,7 +48,7 @@
         </div>            
       </div>
 
-      <div v-show="propertyObj.type == 'bpmn:Task'">
+      <div v-show="propertyObj.type == 'bpmn:UserTask'">
         <div>
           <label>id</label>
           <span>{{ propertyObj.id }}</span>
@@ -63,18 +63,18 @@
         </div>
         <div>
           <p class="margin1">目标类:</p>
-           <select v-model="propertyObj.selectedClass" @on-change="changeSelectedClass" clearable filterable >
-              <option v-for="entity in entities" :value="entity.className" :key="entity.className">{{ entity.className}} </option>
-           </select>
+           <Select v-model="propertyObj.selectedClass" @on-change="changeSelectedClass" clearable filterable >
+              <Option v-for="entity in entities" :value="entity.className" :key="entity.className">{{ entity.className}} </Option>
+           </Select>
         </div>         
 
         <div>  
           <p class="margin1">分配人</p>
-          <input :value="propertyObj.assignee"/>
+          <Input :value="propertyObj.assignee" @on-change="changeAssignee"/>
         </div>  
         
         <div class="margin1" >绑定表单：
-          <select v-model="propertyObj.selectedView" @on-change="changeSelectedView"  clearable filterable >
+          <select v-model="propertyObj.selectedView" @change="changeSelectedView"  clearable filterable >
                  <option v-for="view in selectViews" :value="view.viewName" :key="view.viewName">{{ view.viewName}} </option>
           </select>
                     </div>
@@ -136,11 +136,11 @@
 
     <Modal v-model="processEditPanel" :mask-closable="false" title="高级属性" width="1200" height="500" >
 
-            <Tabs v-show="propertyObj.type == 'bpmn:Task'" value="name1">
+            <Tabs v-show="propertyObj.type == 'bpmn:UserTask'" value="name1">
                 <!-- <TabPane label="对象属性" name="name1">
                     <Table :columns="taskVariableCol" :data="taskVariable" :height="scrollHeight*0.5"></Table>
                 </TabPane> -->
-                <TabPane v-show="propertyObj.type == 'bpmn:Task'" label="办理人" name="name2">
+                <TabPane v-show="propertyObj.type == 'bpmn:UserTask'" label="办理人" name="name2">
                     <div style="margin:8px 0;">
                         <org-user-selector :havelauncher="true" ref="participantSelector" style="display: inline-block;margin-right:10px"/> 
                         <Button @click="addParticipant">添加</Button>
@@ -257,6 +257,7 @@ export default {
       console.log("modeler",modeler);
       console.log(START_EVENT);
       this.modeling = this.modeler.get("modeling");
+      this.moddle = this.modeler.get('moddle');   
       this.getEntities()
     },
 
@@ -348,7 +349,7 @@ export default {
 
     changeSelectedClass(value){
       let selectedClass = value;
-      console.log(selectedClass);
+      console.log("selectedClass",selectedClass);
       getViews(selectedClass).then(res => {
         console.log(res.data.success);
       if(res.data.success){
@@ -356,6 +357,31 @@ export default {
         console.log(this.selectViews);
       }});
 
+    },
+
+    changeSelectedView(event){
+      let selectedView = event.target.value;
+      console.log("selectedView",selectedView);
+
+      this.moddle = this.modeler.get('moddle');
+      const newProperty =  this.moddle.createAny('camunda:property');
+      newProperty.name = "viewName";
+      newProperty.value = selectedView;
+
+      const newProperties = this.moddle.createAny('camunda:properties');
+
+      newProperties.$children = [];
+      newProperties.$children.push(newProperty);
+      console.log(newProperties)
+
+      const newExtensionElements =  this.moddle.create('bpmn:ExtensionElements',{values:[newProperties]});
+
+      const elementRegistry = this.modeler.get("elementRegistry");
+      const activity = elementRegistry.get(this.propertyObj.id)
+
+      this.modeling.updateProperties(activity,{
+        extensionElements: newExtensionElements
+      })
     },
 
     showProcessEditPanel(){
@@ -402,22 +428,14 @@ export default {
                 
                 this.propertyObj.participants.push(par);   
                 this.propertyObj.assignee = par.name;
-                this.changeAssignee()
+                //this.changeAssignee()
 
                 this.$refs.participantSelector.recovery();
          
         },
 
   },
-  /* watch:{
-    propertyObj: {
-      handler (n, o) {
-        console.log("new", n, this.choose)
-      },
-      deep: true // 深度监听父组件传过来对象变化
-    }
-    
-  } */
+
 };
 </script>
 

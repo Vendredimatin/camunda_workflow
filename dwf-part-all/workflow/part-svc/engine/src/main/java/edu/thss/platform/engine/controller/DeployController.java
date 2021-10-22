@@ -1,5 +1,6 @@
 package edu.thss.platform.engine.controller;
 
+import camundajar.impl.com.google.gson.JsonObject;
 import edu.thss.platform.engine.service.DeploymentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,6 +56,26 @@ public class DeployController {
                 return "error";// success
             }
         } catch (Exception e) { e.printStackTrace(); return "404"; }
+    }
+
+    @ApiOperation(value = "获取扩展变量")
+    @PostMapping(path = "get-extension-variables")
+    public JsonObject getExtensionVariables(@ApiParam(value = "请求示例：\n```\n " +
+            "{\n" +
+            "    \"processDefinitionId\":\"leave\",\n" +
+            "    \"taskDefinitionKey\":\"leave\",\n" +
+            "}\n```", required = true) @RequestBody Map<String, Object> param) {
+        try {
+            System.out.println(1);
+            String processDefinitionId = (String)param.get("processDefinitionId");
+            String taskDefinitionKey = (String)param.get("taskDefinitionKey");
+            JsonObject jsonObject = deploymentService.getExtensionVariables(processDefinitionId, taskDefinitionKey);
+            if(jsonObject != null){
+                return jsonObject;
+            }else {
+                return null;// success
+            }
+        } catch (Exception e) { e.printStackTrace(); return null; }
     }
 
 }

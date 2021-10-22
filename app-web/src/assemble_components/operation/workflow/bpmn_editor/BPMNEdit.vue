@@ -425,6 +425,7 @@ export default {
 
         this.propertyObj = this.propertyObjs.get(this.element.id);
         this.choose = true;
+        console.log(this.propertyObj)
       } else {
         this.propertyObj = undefined;
         this.choose = false;

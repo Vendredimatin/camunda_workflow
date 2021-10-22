@@ -296,6 +296,7 @@ export default {
             };
             console.log("params",params);
             getTaskInstCount(params).then(res=>{
+                console.log("taskNumber", res.data);
                  if(res.success) that.totalNumber = res.data;
                  else that.$Message.error("加载失败");
             });

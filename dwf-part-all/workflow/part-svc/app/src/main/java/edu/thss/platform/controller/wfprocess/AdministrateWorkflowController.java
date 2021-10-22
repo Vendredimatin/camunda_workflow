@@ -3,6 +3,7 @@ package edu.thss.platform.controller.wfprocess;
 import com.alibaba.fastjson.JSONObject;
 import edu.thss.platform.controller.ResponseMsg;
 import edu.thss.platform.dao.wfprocess.ReleasedWfProcessTemplateDao;
+import edu.thss.platform.domain.wfprocess.NewWfProcessInstance;
 import edu.thss.platform.domain.wfprocess.ReleasedWfProcessTemplate;
 import edu.thss.platform.exception.PlatformException;
 import edu.thss.platform.newService.Server;
@@ -152,7 +153,7 @@ public class AdministrateWorkflowController {
 
 	@ApiOperation(value = "获取用户的任务列表")
 	@PostMapping(path = "task-instances")
-	public ResponseMsg<List<JSONObject>> getManualTaskInstances(@ApiParam(value = "请求示例：\n```\n " +
+	public ResponseMsg<List<Map<String,String>>> getManualTaskInstances(@ApiParam(value = "请求示例：\n```\n " +
 			"{\n" +
 			"    \"userId\":\"53B68E57C5D8D94F937A1F0354CAB473\",\n" +
 			"    \"filerStatus\":\"[1,2,3]\",\n" +
@@ -169,8 +170,8 @@ public class AdministrateWorkflowController {
 			Integer pageSize = (Integer) params.get("pageSize");
 			String condition = (String) params.get("condition");
 			if (filerStatus == null || filerStatus.length() == 0) filerStatus="[1]";
-			List<JSONObject> list = server.getTaskList(userName, filerStatus, pageIndex, pageSize, condition);
-			return new ResponseMsg<>(list);
+			List<Map<String,String>> tasks = server.getTaskList(userName, filerStatus, pageIndex, pageSize, condition);
+			return new ResponseMsg<>(tasks);
 		} catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
 	}
 
