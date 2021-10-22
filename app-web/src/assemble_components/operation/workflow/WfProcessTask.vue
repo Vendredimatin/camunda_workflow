@@ -331,6 +331,13 @@ export default {
                         }
                       
                     } */
+                    for(var i=0; i < re.length; i++){
+                        re[i].index = i;
+                        re[i].wfProcessInstanceId = re[i].processInstanceId;
+                        re[i].name = re[i].taskDefinitionKey;
+                        re[i].bindEnClassName = re[i].enClassInstanceId;
+                        // re[i].formName = re[i].
+                    }
                     that.taskList = re;
                     that.loading = false;
                 }    
