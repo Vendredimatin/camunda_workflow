@@ -57,12 +57,17 @@ public class DeploymentService {
 
         ExtensionElements extensionElements = userTask.getExtensionElements();
 
+        JsonObject jsonObject = new JsonObject();
+
+        if (extensionElements == null){
+            return jsonObject;
+        }
+
         Collection<CamundaProperty> properties = extensionElements .getElementsQuery()
                 .filterByType(CamundaProperties.class)
                 .singleResult()
                 .getCamundaProperties();
 
-        JsonObject jsonObject = new JsonObject();
 
         for (CamundaProperty property : properties) {
             String name = property.getCamundaName();

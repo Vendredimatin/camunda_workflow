@@ -719,6 +719,7 @@ export default {
       }
       if (name in this.tabComs && this.tabComs[name].activate) this.tabComs[name].activate();
       if (name in this.tabComs && name in this.queryMap) {
+        console.log(this.queryMap[name], name);
         this.tabComs[name].$refs.form.handle(`/forms/${this.$route.meta.targetClass}/${this.$route.meta.viewName}`, this.queryMap[name]);
       }
       if(!(name in this.tabViews)) {

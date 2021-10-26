@@ -1,5 +1,6 @@
 package edu.thss.platform.engine.controller;
 
+import camundajar.impl.com.google.gson.Gson;
 import camundajar.impl.com.google.gson.JsonObject;
 import edu.thss.platform.engine.service.DeploymentService;
 import io.swagger.annotations.Api;
@@ -60,7 +61,7 @@ public class DeployController {
 
     @ApiOperation(value = "获取扩展变量")
     @PostMapping(path = "get-extension-variables")
-    public JsonObject getExtensionVariables(@ApiParam(value = "请求示例：\n```\n " +
+    public String getExtensionVariables(@ApiParam(value = "请求示例：\n```\n " +
             "{\n" +
             "    \"processDefinitionId\":\"b9e68be1-3188-11ec-9ffe-32b49eea4695\",\n" +
             "    \"taskDefinitionKey\":\"Activity_1mhc7ho\",\n" +
@@ -72,12 +73,13 @@ public class DeployController {
             System.out.println(processDefinitionId);
             System.out.println(taskDefinitionKey);
             JsonObject jsonObject = deploymentService.getExtensionVariables(processDefinitionId, taskDefinitionKey);
-            if(jsonObject != null){
-                return jsonObject;
+            String jsonStr = new Gson().toJson(jsonObject);
+            if(jsonStr != null){
+                return jsonStr;
             }else {
-                return null;// success
+                return "404";// success
             }
-        } catch (Exception e) { e.printStackTrace(); return null; }
+        } catch (Exception e) { e.printStackTrace(); return "404"; }
     }
 
 }

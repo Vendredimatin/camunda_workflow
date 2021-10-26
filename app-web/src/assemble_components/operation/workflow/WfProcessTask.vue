@@ -335,7 +335,11 @@ export default {
                         re[i].index = i;
                         re[i].wfProcessInstanceId = re[i].processInstanceId;
                         re[i].name = re[i].taskDefinitionKey;
-                        re[i].bindEnClassName = re[i].enClassInstanceId;
+                        // re[i].bindEnClassName = re[i].enClassInstanceId;
+                        re[i].formName = re[i].viewName;
+                        re[i].submitterName = re[i].assignee;
+                        re[i].taskInstanceEnabledDateTime = re[i].created;
+                        re[i].bindEnClassName = "WorkOrder";
                         // re[i].formName = re[i].
                     }
                     that.taskList = re;
@@ -426,7 +430,7 @@ export default {
         async openTaskForm(){
             var wfauthority = "submission";
             // 待提交
-            if(this.currTask.taskInstanceStatus == 1){
+            /* if(this.currTask.taskInstanceStatus == 1){
                 var status =  await this.receiveTask();
                 if(status == 0){
                     that.$Message.success("自动领取失败");
@@ -435,7 +439,7 @@ export default {
             }
             if(this.currTask.taskInstanceStatus == 3){
                 wfauthority = "assign"; //被抄送
-            }
+            } */
 
             let item = this.currTask;
 

@@ -3495,6 +3495,7 @@
         }
         this.rootJson.data.displayType = this.query.displayType;
         this.rootJson.data.deviceType = this.queryData.deviceType;
+        console.log("this.query.obj",this.query.obj);
         try {
           // 将查询结果id放入json
           //this.queryData.iotdbDevice
@@ -3523,6 +3524,7 @@
 
                   }
                 }else{
+                  console.log("getEobjSingle",this.queryData.targetClass, this.queryData.uuid, query);
                   this.rootJson.data.origin = await getEobjSingle(this.queryData.targetClass, this.queryData.uuid, query);
                 }
                 //uuid对应对象尚未绑定IOTDB返回400，走原查询
@@ -3544,6 +3546,7 @@
           }
           if (!this.rootJson.data.origin) this.rootJson.data.origin = {};
           this.obj = this.rootJson.data.origin;
+          console.log("this.obj", this.obj);
         } catch (e) {
           console.log("数据查询失败", e);
         }

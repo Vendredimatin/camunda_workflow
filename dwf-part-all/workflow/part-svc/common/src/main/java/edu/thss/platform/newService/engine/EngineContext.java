@@ -57,16 +57,28 @@ public class EngineContext {
         return entity.getBody();
     }
 
-    public Map<String,String> getExtensionVariables(String processDefinitionId, String taskDefinitionKey){
+    public Map<String,String> getExtensionVariables(String processDefinitionId, String taskDefinitionKey) {
         JSONObject requestBody = new JSONObject();
         requestBody.put("processDefinitionId", processDefinitionId);
         requestBody.put("taskDefinitionKey", taskDefinitionKey);
         System.out.println(processDefinitionId);
         System.out.println(taskDefinitionKey);
         String url = "http://127.0.0.1:8888/camunda/deploy/get-extension-variables";
-        ResponseEntity<Map> entity = RestTemplateUtils.post(url, requestBody, Map.class);
+        ResponseEntity<String> entity = RestTemplateUtils.post(url, requestBody, String.class);
         // 从引擎取出来之后，需要根据taskId、processInstanceId分别补充实体类名、表单名、发起人等信息
-        return entity.getBody();
+        String jsonStr = entity.getBody();
+        Map<String, String> ret = (Map<String, String>) JSON.parse(jsonStr);
+        return ret;
+    }
+
+    public String commitTask(String taskId){
+        String url = "http://127.0.0.1:8888/engine-rest/task/{id}/complete";
+        JSONObject requestBody = new JSONObject();
+        ResponseEntity<String> response = new RestTemplateUtils().post(url, requestBody, String.class, taskId);
+        System.out.println(response.getStatusCode());
+
+        System.out.println(response.getBody());
+        return response.getBody();
     }
 
 }

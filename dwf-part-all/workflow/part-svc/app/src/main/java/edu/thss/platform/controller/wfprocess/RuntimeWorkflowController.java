@@ -161,6 +161,37 @@ public class RuntimeWorkflowController {
         } catch (Exception e) { e.printStackTrace(); return new ResponseMsg(404); }
     }
 
+    /*@ApiOperation(value = "对任务进行操作")
+    @PostMapping(path = "process-instance-command")
+    public ResponseMsg sendCommandWithSaving(@ApiParam(value = "请求示例：\n```\n " +
+            "{\n" +
+            "    \"cmd\":\"执行命令，0:保存;1:关闭;2:提交;3:退回;4:移交\",\n" +
+            "    \"proInstanceId\":\"流程实例Id\",\n" +
+            "    \"taskInctanceId\":\"任务实例Id\",\n" +
+            "    \"userId\":\"53B68E57C5D8D94F937A1F0354CAB473\",\n" +
+            "    \"userDisplayName\":\"工作流用户\",\n" +
+            "    \"userIp\":\"提交并指派下一步执行人: userip=\"&&&1&&&被指派人id&&&被指派人名\"\",\n" +
+            "    \"newUserId\":\"移交给的用户Id\",\n" +
+            "    \"paramValues\":\"对象实例数据\",\n" +
+            "    \"comment\":\"备注内容\",\n" +
+            "}\n```", required = true) @RequestBody Map<String, Object> param) {
+        String cmd = (String)param.get("cmd");
+        String proInstanceId = (String)param.get("proInstanceId");
+        String taskInctanceId = (String)param.get("taskInctanceId");
+        String userId = (String)param.get("userId");
+        String userDisplayName = (String)param.get("userDisplayName");
+        String userIp = (String)param.get("userIp");
+        String newUserId = (String)param.get("newUserId");
+        String paramValues = (String)param.get("paramValues");
+        String comment = (String)param.get("comment");
+
+        try {
+            String success = SaaSServer.getInstance().sendCommandWithSaving(cmd, proInstanceId, taskInctanceId, userId,userDisplayName,userIp, newUserId,paramValues,comment);
+            if (success.equals("1")) return new ResponseMsg();
+            else return new ResponseMsg<>(404);
+        } catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
+    }*/
+
     @ApiOperation(value = "对任务进行操作")
     @PostMapping(path = "process-instance-command")
     public ResponseMsg sendCommandWithSaving(@ApiParam(value = "请求示例：\n```\n " +
@@ -188,6 +219,36 @@ public class RuntimeWorkflowController {
         try {
             String success = SaaSServer.getInstance().sendCommandWithSaving(cmd, proInstanceId, taskInctanceId, userId,userDisplayName,userIp, newUserId,paramValues,comment);
             if (success.equals("1")) return new ResponseMsg();
+            else return new ResponseMsg<>(404);
+        } catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
+    }
+
+    @ApiOperation(value = "对任务进行进行提交")
+    @PostMapping(path = "process-instance-commit")
+    public ResponseMsg commitTask(@ApiParam(value = "请求示例：\n```\n " +
+            "{\n" +
+            "    \"proInstanceId\":\"流程实例Id\",\n" +
+            "    \"taskInctanceId\":\"任务实例Id\",\n" +
+            "    \"userId\":\"53B68E57C5D8D94F937A1F0354CAB473\",\n" +
+            "    \"userDisplayName\":\"工作流用户\",\n" +
+            "    \"userIp\":\"提交并指派下一步执行人: userip=\"&&&1&&&被指派人id&&&被指派人名\"\",\n" +
+            "    \"newUserId\":\"移交给的用户Id\",\n" +
+            "    \"paramValues\":\"对象实例数据\",\n" +
+            "    \"comment\":\"备注内容\",\n" +
+            "}\n```", required = true) @RequestBody Map<String, Object> param) {
+
+        String proInstanceId = (String)param.get("proInstanceId");
+        String taskInctanceId = (String)param.get("taskInctanceId");
+        String userId = (String)param.get("userId");
+        String userDisplayName = (String)param.get("userDisplayName");
+        String userIp = (String)param.get("userIp");
+        String newUserId = (String)param.get("newUserId");
+        String paramValues = (String)param.get("paramValues");
+        String comment = (String)param.get("comment");
+
+        try {
+            String success = server.commitTask(proInstanceId, taskInctanceId, userId,userDisplayName,userIp, newUserId,paramValues,comment);
+            if (success.equals("true")) return new ResponseMsg();
             else return new ResponseMsg<>(404);
         } catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
     }

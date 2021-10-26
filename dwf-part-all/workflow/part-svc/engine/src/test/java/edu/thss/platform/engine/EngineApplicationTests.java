@@ -1,5 +1,6 @@
 package edu.thss.platform.engine;
 
+import camundajar.impl.com.google.gson.JsonObject;
 import org.camunda.bpm.engine.*;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -10,6 +11,8 @@ import org.camunda.bpm.model.bpmn.instance.UserTask;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperties;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperty;
 import org.camunda.bpm.model.xml.instance.ModelElementInstance;
+import org.camunda.spin.impl.json.jackson.JacksonJsonNode;
+import org.camunda.spin.json.SpinJsonNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -86,6 +89,17 @@ class EngineApplicationTests {
             String name = property.getCamundaName();
             String value = property.getCamundaValue();
         }
+    }
+
+    @Test
+    public void getVariable(){
+        String taskInstanceId = "b9e83994-3188-11ec-9ffe-32b49eea4695";
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        TaskService taskService = processEngine.getTaskService();
+        JacksonJsonNode node = (JacksonJsonNode) taskService.getVariable(taskInstanceId, "t1");
+        SpinJsonNode spinJsonNode = node.prop("type");
+        System.out.println(spinJsonNode.value());
+        System.out.println(node.prop("x").value());
     }
 
 }

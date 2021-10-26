@@ -104,6 +104,10 @@ export const sendCommand = (data) => {
 
 };
 
+export const commitTask = (params) => {
+    return axios.post(`${baseObjOther}/workflow/runtime/process-instance-commit`,params).then(res => res.data);
+};
+
 // 删除流程实例
 export const deleteProcessInstance = (proInstanceId) => {
     return axios.post(`${baseObjOther}/workflow/runtime/process-instance/${proInstanceId}/delete`).then(res => res.data);

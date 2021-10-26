@@ -1,6 +1,5 @@
 package edu.thss.platform.newService;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import edu.thss.platform.dao.wfprocess.NewWfProcessInstanceDao;
@@ -10,14 +9,15 @@ import edu.thss.platform.domain.wfprocess.ReleasedWfProcessTemplate;
 
 import edu.thss.platform.newService.dwf.DWFContext;
 import edu.thss.platform.newService.engine.EngineContext;
+import edu.thss.platform.service.wfprocess.blo.runtime.wfprocessinstance.ProcessInstanceBlo;
+import edu.thss.platform.service.wfprocess.core.buildtime.wfprocess.ParticipationType;
+import edu.thss.platform.service.wfprocess.core.runtime.wfprocess.WfProcessInstance;
 import edu.thss.platform.service.wfprocess.core.runtime.workitem.WorkitemInfoDescriptor;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,6 +92,7 @@ public class Server {
 
             String processDefinitionId = task.get("processDefinitionId");
             String taskDefinitionKey = task.get("taskDefinitionKey");
+            String processInstanceId = task.get("processInstanceId");
 
             Map<String,String> extensionVariables = engineContext.getExtensionVariables(processDefinitionId, taskDefinitionKey);
             if (extensionVariables != null){
@@ -101,7 +102,7 @@ public class Server {
             }
 
 
-            NewWfProcessInstance newWfProcessInstance = processInstanceDao.findByProcessInstanceId(processDefinitionId);
+            NewWfProcessInstance newWfProcessInstance = processInstanceDao.findByProcessInstanceId(processInstanceId);
             if(newWfProcessInstance != null) {
                 task.put("enClassInstanceId", newWfProcessInstance.getEnClassInstanceId());
                 ret.add(task);
@@ -109,5 +110,11 @@ public class Server {
         }
 
         return ret;
+    }
+
+    public String commitTask(String proInstanceId, String taskInstanceId, String userId, String userDisplayName, String userIp, String newUserId, String paramValues, String comment) {
+        String success = "0";
+        success = engineContext.commitTask(taskInstanceId);
+        return  success; // success
     }
 }
