@@ -74,10 +74,11 @@ public class EngineContext {
     public String commitTask(String taskId){
         String url = "http://127.0.0.1:8888/engine-rest/task/{id}/complete";
         JSONObject requestBody = new JSONObject();
+        System.out.println("commitTask taskId:" + taskId);
         ResponseEntity<String> response = new RestTemplateUtils().post(url, requestBody, String.class, taskId);
         System.out.println(response.getStatusCode());
 
-        System.out.println(response.getBody());
+        System.out.println("commitTask body()" +response.getBody());
         return response.getBody();
     }
 
