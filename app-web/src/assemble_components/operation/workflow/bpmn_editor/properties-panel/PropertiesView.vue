@@ -59,7 +59,7 @@
               </div> -->
         <div>  
           <p class="margin1">名称</p>
-          <Input v-model="propertyObj.name" placeholder="名称"/>
+          <Input v-model="propertyObj.name"   @on-change="changeElementName" placeholder="名称"/>
         </div>
         <div>
           <p class="margin1">目标类:</p>
@@ -70,13 +70,14 @@
 
         <div>  
           <p class="margin1">分配人</p>
-          <Input :value="propertyObj.assignee" @on-change="changeAssignee"/>
+          <Input :value="propertyObj.assignee"/>
         </div>  
         
         <div class="margin1" >绑定表单：
-          <select v-model="propertyObj.selectedView" @change="changeSelectedView"  clearable filterable >
-                 <option v-for="view in selectViews" :value="view.viewName" :key="view.viewName">{{ view.viewName}} </option>
-          </select>
+<!--           <Input v-model="propertyObj.selectedView" @on-change="changeSelectedView"  placeholder="表单"/>
+ -->          <Select v-model="propertyObj.selectedView" @on-change="changeSelectedView"  clearable filterable >
+             <Option v-for="view in selectViews" :value="view.viewName" :key="view.viewName">{{ view.viewName}} </Option>
+          </Select>
                     </div>
                      <div class="margin1" >前处理操作：
                         <Select clearable filterable>
@@ -348,8 +349,15 @@ export default {
     },
 
     changeSelectedClass(value){
+      console.log("测试加载页面时，是否触发过这个方法");
+      if(value == undefined) return;
       let selectedClass = value;
       console.log("selectedClass",selectedClass);
+      console.log("propertyObj", this.propertyObj);
+      this.updateCamundaProperty(this.propertyObj.id, "enClass", selectedClass);
+
+      console.log("propertyObj", this.propertyObj);
+
       getViews(selectedClass).then(res => {
         console.log(res.data.success);
       if(res.data.success){
@@ -359,14 +367,71 @@ export default {
 
     },
 
-    changeSelectedView(event){
-      let selectedView = event.target.value;
-      console.log("selectedView",selectedView);
+    changeElementName(event){
+      let elementName = event.data;
 
-      this.moddle = this.modeler.get('moddle');
-      const newProperty =  this.moddle.createAny('camunda:property');
-      newProperty.name = "viewName";
-      newProperty.value = selectedView;
+      console.log("elementName", elementName);
+
+      const elementRegistry = this.modeler.get("elementRegistry");
+      const activity = elementRegistry.get(this.propertyObj.id)
+
+      this.modeling.updateProperties(activity,{
+        name: elementName
+      })
+
+      console.log("propertyObj", this.propertyObj);
+    },
+
+    changeSelectedView(value){
+      if(value == undefined) return;
+      let selectedView = value;
+      console.log("selectedView",selectedView);
+ 
+      this.updateCamundaProperty(this.propertyObj.id, "viewName", selectedView);
+      console.log("propertyObj", this.propertyObj);
+    },
+
+    updateCamundaProperty(elementId, key, value){
+      const elementRegistry = this.modeler.get("elementRegistry");
+      const element = elementRegistry.get(elementId);
+      console.log("updateCamundaProperty", element);
+
+      var extensionElements = element.businessObject.extensionElements;
+      if(extensionElements != undefined){
+        var camundaProperties = extensionElements.values[0];
+        var isExist = false;
+        for(var i = 0; i < camundaProperties.values.length; i++){
+          var camundaProperty = camundaProperties.values[i];
+          if(camundaProperty.name == key){
+            camundaProperties.values[i].value = value;
+            isExist = true;
+            break;
+          }
+        }
+
+        if(!isExist){
+          const newProperty =  this.moddle.createAny('camunda:property');
+          newProperty.name = key;
+          newProperty.value = value;
+          camundaProperties.values.push(newProperty);
+        }
+      }else{
+        const newProperties = this.moddle.createAny('camunda:properties');
+
+        newProperties.$children = [];
+        newProperties.$children.push(newProperty);
+        console.log(newProperties)
+
+        extensionElements =  this.moddle.create('bpmn:ExtensionElements',{values:[newProperties]});
+      }
+
+      this.modeling.updateProperties(element,{
+        extensionElements: extensionElements
+      });
+
+      /* const newProperty =  this.moddle.createAny('camunda:property');
+      newProperty.name = key;
+      newProperty.value = value;
 
       const newProperties = this.moddle.createAny('camunda:properties');
 
@@ -377,11 +442,12 @@ export default {
       const newExtensionElements =  this.moddle.create('bpmn:ExtensionElements',{values:[newProperties]});
 
       const elementRegistry = this.modeler.get("elementRegistry");
-      const activity = elementRegistry.get(this.propertyObj.id)
+      const activity = elementRegistry.get(elementId);
 
       this.modeling.updateProperties(activity,{
         extensionElements: newExtensionElements
       })
+ */
     },
 
     showProcessEditPanel(){
@@ -428,7 +494,7 @@ export default {
                 
                 this.propertyObj.participants.push(par);   
                 this.propertyObj.assignee = par.name;
-                //this.changeAssignee()
+                this.changeAssignee()
 
                 this.$refs.participantSelector.recovery();
          

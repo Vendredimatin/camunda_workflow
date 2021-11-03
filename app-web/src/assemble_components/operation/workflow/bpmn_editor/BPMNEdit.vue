@@ -88,6 +88,7 @@ import PropertiesView from "./properties-panel/PropertiesView";
 import PropertyObject from "../model/PropertyObject";
 import WfProcessTemplate from "../model/WfProcessTemplate";
 import { releaseTemplate, saveTemplate, getTemplateById } from "../api/WfProcessApi";
+import { forEach } from '../../../../libs/utils';
 
 export default {
   name: "bpmn",
@@ -352,18 +353,53 @@ export default {
       
     },
 
+    loadElements(){
+      const elementRegistry = this.bpmnModeler.get("elementRegistry");
+      const elements = elementRegistry.getAll();  
+
+      for(var i = 0; i < elements.length; i++){
+        var element = elements[i];
+        var businessObject = element.businessObject;
+        let newPropertyObj = new PropertyObject();
+        
+        newPropertyObj.id = element.id;
+        newPropertyObj.type = element.type;
+        newPropertyObj.name = businessObject.name;
+        if(element.type == "bpmn:UserTask"){
+          newPropertyObj.participants = [];
+          newPropertyObj.assignee = businessObject.assignee;
+          if(businessObject.extensionElements != undefined){
+            var camundaProperties = businessObject.extensionElements.values[0].values;
+            for(var j = 0; j < camundaProperties.length; j++){
+              var camundaProperty = camundaProperties[j];
+              if(camundaProperty.name == "enClass")
+                newPropertyObj.selectedClass = camundaProperty.value;
+              else if(camundaProperty.name == "viewName"){
+                newPropertyObj.selectedView = camundaProperty.value;
+              }
+            }
+          }
+        }
+        this.propertyObjs.set(element.id, newPropertyObj);
+      }
+
+      console.log(this.propertyObjs);
+    },
+
+
     success() {
       // 给图绑定事件，当图有发生改变就会触发这个事件
       const that = this
       this.bpmnModeler.on('commandStack.changed', function() {
         that.saveDiagram(function(err, xml) {
           console.log(xml);
-          /* console.log(task.businessObject);
-          console.log(task.businessObject.extensionElements);
-          console.log(task.businessObject.extensionElements.values[0]);
-          console.log(task.businessObject.extensionElements.values[0].$children[0].$attr); */
         })
       })
+
+      //根据xml加载propertyObjs
+      console.log("elementregistry", this.bpmnModeler.get("elementRegistry"));
+      console.log("elementregistry elements", this.bpmnModeler.get("elementRegistry")._elements);
+      this.loadElements()
     },
 
     saveDiagram(done) {
@@ -409,6 +445,7 @@ export default {
       // 	})
       // })
     },
+
     updatePropertyObj() {
       if (this.element) {
         if (!this.propertyObjs.has(this.element.id)) {
@@ -426,10 +463,7 @@ export default {
         this.propertyObj = this.propertyObjs.get(this.element.id);
         this.choose = true;
         console.log(this.propertyObj)
-      } else {
-        this.propertyObj = undefined;
-        this.choose = false;
-      }
+      } 
     },
     onConfirmRelease() {
       this.$refs["releaseForm"].validate((valid) => {
