@@ -246,8 +246,11 @@ public class RuntimeWorkflowController {
         String paramValues = (String)param.get("paramValues");
         String comment = (String)param.get("comment");
 
+        System.out.println("paramValues:" + paramValues);
+
         try {
             String success = server.commitTask(proInstanceId, taskInctanceId, userId,userDisplayName,userIp, newUserId,paramValues,comment);
+            System.out.println("success:"+success);
             if (success.equals("true")) return new ResponseMsg();
             else return new ResponseMsg<>(404);
         } catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }

@@ -104,13 +104,13 @@ class EngineApplicationTests {
 
     @Test
     public void getProcessVariables(){
-        String processInstanceId = "2b35d66d-3707-11ec-bf3d-32b49eea4695";//"c8770f28-3706-11ec-bf3d-32b49eea4695";//"56dc8748-3705-11ec-bf3d-32b49eea4695";//"aaa68541-3700-11ec-bf3d-32b49eea4695";//"b9e83994-3188-11ec-9ffe-32b49eea4695";
+        String processInstanceId = "13311e78-3c7c-11ec-97ab-0205857feb80";//"2b35d66d-3707-11ec-bf3d-32b49eea4695";//"c8770f28-3706-11ec-bf3d-32b49eea4695";//"56dc8748-3705-11ec-bf3d-32b49eea4695";//"aaa68541-3700-11ec-bf3d-32b49eea4695";//"b9e83994-3188-11ec-9ffe-32b49eea4695";
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         TaskService taskService = processEngine.getTaskService();
         RuntimeService runtimeService = processEngine.getRuntimeService();
 
         JacksonJsonNode node = (JacksonJsonNode) runtimeService.getVariable(processInstanceId, "t1");
-        SpinJsonNode spinJsonNode = node.prop("type");
+        SpinJsonNode spinJsonNode = node.prop("woTitle");
         System.out.println(spinJsonNode.value());
         System.out.println(node.prop("x").value());
     }

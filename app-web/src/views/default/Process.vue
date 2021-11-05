@@ -356,6 +356,7 @@ export default {
       let obj = form.GetObj(form.rootJson.data, true);
       return obj;
     },
+
     submit(nextUser) {
       var userip = "";
       let that = this;
@@ -376,6 +377,7 @@ export default {
         paramValues: JSON.stringify(obj[0]),
       };
 
+      console.log("paramValues", params.paramValues);
       commitTask(params).then((re) => {
         if (re.success) {
           that.Message.success("提交成功");

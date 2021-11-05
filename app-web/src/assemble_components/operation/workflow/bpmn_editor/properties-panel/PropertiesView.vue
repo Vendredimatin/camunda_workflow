@@ -4,7 +4,7 @@
     <!-- <div class="empty" v-else-if="selectedElements.length > 1">
       只能选择一个元素
     </div> -->
-    <p>{{propertyObj.id}}</p>
+    <p>{{ propertyObj.id }}</p>
 
     <div v-if="propertyObj == undefined">
       <!-- <div v-if="!editable" class="margin1">
@@ -36,16 +36,30 @@
       <!-- <div v-if="isProcess">
         
       </div> -->
-
       <div v-show="propertyObj.type == 'bpmn:StartEvent'">
         <div>
           <label>id</label>
           <span>{{ propertyObj.id }}</span>
         </div>
-        <div>  
+        <div>
           <p class="margin1">名称</p>
-          <Input  placeholder="名称"/>
-        </div>            
+          <Input placeholder="名称" />
+        </div>
+      </div>
+
+      <div v-show="propertyObj.type == 'bpmn:SequenceFlow'">
+        <div>
+          <label>id</label>
+          <span>{{ propertyObj.id }}</span>
+        </div>
+        <div>
+          <p class="margin1">名称</p>
+          <Input placeholder="名称" @on-change="changeElementName" />
+        </div>
+        <div>
+          <p class="margin1">表达式</p>
+          <Input placeholder="Expression" @on-change="changeExpression" />
+        </div>
       </div>
 
       <div v-show="propertyObj.type == 'bpmn:UserTask'">
@@ -53,42 +67,77 @@
           <label>id</label>
           <span>{{ propertyObj.id }}</span>
         </div>
-          <!-- <div>当前状态：{{propertyObj.statusType}}</div>
+        <!-- <div>当前状态：{{propertyObj.statusType}}</div>
               <div v-show="propertyObj.status == 3">
                   <div>开始时间：{{new Date(propertyObj.startTime).format("yyyy-MM-dd hh:mm:ss")}}</div>
               </div> -->
-        <div>  
+        <div>
           <p class="margin1">名称</p>
-          <Input v-model="propertyObj.name"   @on-change="changeElementName" placeholder="名称"/>
+          <Input
+            v-model="propertyObj.name"
+            @on-change="changeElementName"
+            placeholder="名称"
+          />
         </div>
         <div>
           <p class="margin1">目标类:</p>
-           <Select v-model="propertyObj.selectedClass" @on-change="changeSelectedClass" clearable filterable >
-              <Option v-for="entity in entities" :value="entity.className" :key="entity.className">{{ entity.className}} </Option>
-           </Select>
-        </div>         
-
-        <div>  
-          <p class="margin1">分配人</p>
-          <Input :value="propertyObj.assignee"/>
-        </div>  
-        
-        <div class="margin1" >绑定表单：
-<!--           <Input v-model="propertyObj.selectedView" @on-change="changeSelectedView"  placeholder="表单"/>
- -->          <Select v-model="propertyObj.selectedView" @on-change="changeSelectedView"  clearable filterable >
-             <Option v-for="view in selectViews" :value="view.viewName" :key="view.viewName">{{ view.viewName}} </Option>
+          <Select
+            v-model="propertyObj.selectedClass"
+            @on-change="changeSelectedClass"
+            clearable
+            filterable
+          >
+            <Option
+              v-for="entity in entities"
+              :value="entity.className"
+              :key="entity.className"
+              >{{ entity.className }}
+            </Option>
           </Select>
-                    </div>
-                     <div class="margin1" >前处理操作：
-                        <Select clearable filterable>
-                            <Option></Option>
-                        </Select>
-                    </div>
-          <div class="margin1" >后处理操作：
-                        <Select clearable filterable>
-                            <Option></Option>
-                        </Select>
-                    </div>
+        </div>
+
+        <div>
+          <p class="margin1">分配人</p>
+          <Input :value="propertyObj.assignee" />
+        </div>
+
+        <div class="margin1">
+          绑定表单：
+          <!--           <Input v-model="propertyObj.selectedView" @on-change="changeSelectedView"  placeholder="表单"/>
+ -->
+          <Select
+            v-model="propertyObj.selectedView"
+            @on-change="changeSelectedView"
+            clearable
+            filterable
+          >
+            <Option
+              v-for="view in selectViews"
+              :value="view.viewName"
+              :key="view.viewName"
+              >{{ view.viewName }}
+            </Option>
+          </Select>
+        </div>
+        <div class="margin1">
+          前处理操作：
+          <Select clearable filterable>
+            <Option></Option>
+          </Select>
+        </div>
+        <div class="margin1">
+          后处理操作：
+          <Select clearable filterable>
+            <Option></Option>
+          </Select>
+        </div>
+
+        <Button
+          class="self-btn"
+          @click="showProcessEditPanel"
+          v-if="haveAdvancedProperties"
+          >编辑高级属性</Button
+        >
       </div>
 
       <div v-show="propertyObj.type == 'bpmn:ExclusiveGateway'">
@@ -96,69 +145,82 @@
           <label>id</label>
           <span>{{ propertyObj.id }}</span>
         </div>
-        <div>  
+        <div>
           <p class="margin1">名称</p>
-          <Input  placeholder="名称"/>
-        </div>  
-         <div>
+          <Input placeholder="名称" />
+        </div>
+        <div>
           <p class="margin1">目标类:</p>
-           <Select v-model="selectedClass" clearable filterable >
-              <Option v-for="entity in entities" :value="entity.className" :key="entity.className">{{ entity.className}} </Option>
-            </Select>
-        </div>   
-        <div>  
+          <Select v-model="selectedClass" clearable filterable>
+            <Option
+              v-for="entity in entities"
+              :value="entity.className"
+              :key="entity.className"
+              >{{ entity.className }}
+            </Option>
+          </Select>
+        </div>
+        <div>
           <p class="margin1">监听</p>
-          <Input  placeholder="条件"/>
-        </div>    
+          <Input placeholder="条件" />
+        </div>
       </div>
-
 
       <div v-show="propertyObj.type == 'bpmn:EndEvent'">
         <div>
           <label>id</label>
           <span>{{ propertyObj.id }}</span>
         </div>
-          <!-- <div>当前状态：{{propertyObj.statusType}}</div>
+        <!-- <div>当前状态：{{propertyObj.statusType}}</div>
               <div v-show="propertyObj.status == 3">
                   <div>开始时间：{{new Date(propertyObj.startTime).format("yyyy-MM-dd hh:mm:ss")}}</div>
               </div> -->
-        <div>  
+        <div>
           <p class="margin1">名称</p>
-          <Input  placeholder="名称"/>
-        </div>            
+          <Input placeholder="名称" />
+        </div>
       </div>
-    
-    
-    
-    
     </div>
-    
-    <Button class="self-btn" @click="showProcessEditPanel" v-if="haveAdvancedProperties">编辑高级属性</Button>
 
-    <Modal v-model="processEditPanel" :mask-closable="false" title="高级属性" width="1200" height="500" >
-
-            <Tabs v-show="propertyObj.type == 'bpmn:UserTask'" value="name1">
-                <!-- <TabPane label="对象属性" name="name1">
+    <Modal
+      v-model="processEditPanel"
+      :mask-closable="false"
+      title="高级属性"
+      width="1200"
+      height="500"
+    >
+      <Tabs v-show="propertyObj.type == 'bpmn:UserTask'" value="name1">
+        <!-- <TabPane label="对象属性" name="name1">
                     <Table :columns="taskVariableCol" :data="taskVariable" :height="scrollHeight*0.5"></Table>
                 </TabPane> -->
-                <TabPane v-show="propertyObj.type == 'bpmn:UserTask'" label="办理人" name="name2">
-                    <div style="margin:8px 0;">
-                        <org-user-selector :havelauncher="true" ref="participantSelector" style="display: inline-block;margin-right:10px"/> 
-                        <Button @click="addParticipant">添加</Button>
-                    </div>
-                    <Table :columns="participantCol" :data="propertyObj.participants" :height="scrollHeight*0.5"></Table>
-                </TabPane>
-            </Tabs>
-        </Modal>
+        <TabPane
+          v-show="propertyObj.type == 'bpmn:UserTask'"
+          label="办理人"
+          name="name2"
+        >
+          <div style="margin: 8px 0">
+            <org-user-selector
+              :havelauncher="true"
+              ref="participantSelector"
+              style="display: inline-block; margin-right: 10px"
+            />
+            <Button @click="addParticipant">添加</Button>
+          </div>
+          <Table
+            :columns="participantCol"
+            :data="propertyObj.participants"
+            :height="scrollHeight * 0.5"
+          ></Table>
+        </TabPane>
+      </Tabs>
+    </Modal>
   </div>
-
-  
 </template>
 
 <script>
 import OrgUserSelector from "../../sub_components/orgUserSelector";
 import { START_EVENT } from "bpmn-js/lib/features/replace/ReplaceOptions.js";
-import { getAllEntities, getViews} from '@/api/others.js';
+import { getAllEntities, getViews } from "@/api/others.js";
 export default {
   name: "PropertiesView",
   props: {
@@ -171,18 +233,18 @@ export default {
     },
     choose: null,
   },
-  components : {OrgUserSelector},
+  components: { OrgUserSelector },
   data() {
     return {
       element: null,
-      entities : null,
-      forms : null,
-      selectedClass : null,
-      selectedView : null,
-      selectViews : null,
-      haveAdvancedProperties : true,
+      entities: null,
+      forms: null,
+      selectedClass: null,
+      selectedView: null,
+      selectViews: null,
+      haveAdvancedProperties: true,
       scrollHeight: 1000,
-      processEditPanel : false,
+      processEditPanel: false,
       eventTypes: [
         { label: "默认", value: "" },
         {
@@ -203,49 +265,57 @@ export default {
         { label: "UserTask", value: "bpmn:UserTask" },
       ],
       taskType: "",
-      participantCol:[
+      participantCol: [
+        {
+          title: "类型",
+          key: "participantType",
+          render: (h, params) => {
+            var parType;
+            if (params.row.participantType == "user") parType = "用户";
+            else if (params.row.participantType == "group") parType = "用户组";
+            else if (params.row.participantType == "launcher")
+              parType = "发起人";
+            return h("span", parType);
+          },
+        },
+        {
+          title: "显示名",
+          key: "displayName",
+        },
+        {
+          title: "英文名",
+          key: "name",
+        },
+        {
+          title: "id",
+          key: "oid",
+        },
+        {
+          title: "操作",
+          key: "action",
+          width: 150,
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
                 {
-                        title: '类型',
-                        key: 'participantType',
-                        render:(h, params) =>{
-                            var parType;
-                            if(params.row.participantType == "user") parType ='用户';
-                            else if(params.row.participantType == "group") parType ='用户组';
-                            else if(params.row.participantType == "launcher") parType ='发起人';
-                            return h('span', parType);
-                        }
-                },{
-                        title: '显示名',
-                        key: 'displayName',
-                },{
-                        title: '英文名',
-                        key: 'name',
-                },{
-                        title: 'id',
-                        key: 'oid',
+                  props: {
+                    type: "error",
+                    size: "small",
+                    disabled: !this.editable,
+                  },
+                  on: {
+                    click: () => {
+                      this.removeParticipant(params.index);
+                    },
+                  },
                 },
-                 {
-                        title: '操作',
-                        key: 'action',
-                        width: 150,
-                        align: 'center',
-                        render: (h, params) => {
-                            return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'error',
-                                        size: 'small',
-                                        disabled: !this.editable,
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.removeParticipant(params.index)
-                                        }
-                                    }
-                                }, '删除')
-                            ]);
-                        }
-                    }
+                "删除"
+              ),
+            ]);
+          },
+        },
       ],
     };
   },
@@ -255,11 +325,11 @@ export default {
   methods: {
     init() {
       const { modeler } = this;
-      console.log("modeler",modeler);
+      console.log("modeler", modeler);
       console.log(START_EVENT);
       this.modeling = this.modeler.get("modeling");
-      this.moddle = this.modeler.get('moddle');   
-      this.getEntities()
+      this.moddle = this.modeler.get("moddle");
+      this.getEntities();
     },
 
     /**
@@ -280,18 +350,18 @@ export default {
       this.updateProperties(properties);
     },
 
-    changeAssignee(){
+    changeAssignee() {
       const assignee = this.propertyObj.participants[0].name;
       console.log("assignee", assignee);
 
       const { modeler, element } = this;
       console.log(this.propertyObj);
       const elementRegistry = this.modeler.get("elementRegistry");
-      const activity = elementRegistry.get(this.propertyObj.id)
+      const activity = elementRegistry.get(this.propertyObj.id);
 
       this.modeling.updateProperties(activity, {
-        "camunda:assignee":assignee
-      })      
+        "camunda:assignee": assignee,
+      });
     },
 
     updateName(name) {
@@ -328,7 +398,7 @@ export default {
         type: value,
       });
     },
-    
+
     /**
      * 更新元素属性
      * @param { Object } 要更新的属性, 例如 { name: '' }
@@ -338,95 +408,138 @@ export default {
       const modeling = modeler.get("modeling");
       modeling.updateProperties(element, properties);
     },
-    getEntities(){
-        let that = this;
-            getAllEntities().then(res=>{
-                if(res.data.success){
-                    this.entities = res.data.data;   
-                }
-            });
-
+    getEntities() {
+      let that = this;
+      getAllEntities().then((res) => {
+        if (res.data.success) {
+          this.entities = res.data.data;
+        }
+      });
     },
 
-    changeSelectedClass(value){
+    changeSelectedClass(value) {
       console.log("测试加载页面时，是否触发过这个方法");
-      if(value == undefined) return;
+      if (value == undefined) return;
       let selectedClass = value;
-      console.log("selectedClass",selectedClass);
+      console.log("selectedClass", selectedClass);
       console.log("propertyObj", this.propertyObj);
       this.updateCamundaProperty(this.propertyObj.id, "enClass", selectedClass);
 
       console.log("propertyObj", this.propertyObj);
 
-      getViews(selectedClass).then(res => {
+      getViews(selectedClass).then((res) => {
         console.log(res.data.success);
-      if(res.data.success){
-        this.selectViews = res.data.data;
-        console.log(this.selectViews);
-      }});
-
+        if (res.data.success) {
+          this.selectViews = res.data.data;
+          console.log(this.selectViews);
+        }
+      });
     },
 
-    changeElementName(event){
-      let elementName = event.data;
+    changeElementName(event) {
+      let elementName = event.target.value;
 
       console.log("elementName", elementName);
 
       const elementRegistry = this.modeler.get("elementRegistry");
-      const activity = elementRegistry.get(this.propertyObj.id)
+      const activity = elementRegistry.get(this.propertyObj.id);
 
-      this.modeling.updateProperties(activity,{
-        name: elementName
-      })
+      this.modeling.updateProperties(activity, {
+        name: elementName,
+      });
 
       console.log("propertyObj", this.propertyObj);
     },
 
-    changeSelectedView(value){
-      if(value == undefined) return;
+    changeExpression(event) {
+      let expression = event.target.value;
+      console.log("expression", expression);
+
+      const elementRegistry = this.modeler.get("elementRegistry");
+      const SequenceFlow = elementRegistry.get(this.propertyObj.id);
+      var conditionExpression = this.moddle.create("bpmn:FormalExpression", {
+        body: expression,
+      });
+
+      this.modeling.updateProperties(SequenceFlow, {
+        conditionExpression: conditionExpression,
+      });
+    },
+
+    changeSelectedView(value) {
+      if (value == undefined) return;
       let selectedView = value;
-      console.log("selectedView",selectedView);
- 
+      console.log("selectedView", selectedView);
+
       this.updateCamundaProperty(this.propertyObj.id, "viewName", selectedView);
       console.log("propertyObj", this.propertyObj);
     },
 
-    updateCamundaProperty(elementId, key, value){
+    updateCamundaProperty(elementId, key, value) {
       const elementRegistry = this.modeler.get("elementRegistry");
       const element = elementRegistry.get(elementId);
       console.log("updateCamundaProperty", element);
 
       var extensionElements = element.businessObject.extensionElements;
-      if(extensionElements != undefined){
+      if (extensionElements != undefined) {
         var camundaProperties = extensionElements.values[0];
         var isExist = false;
-        for(var i = 0; i < camundaProperties.values.length; i++){
-          var camundaProperty = camundaProperties.values[i];
-          if(camundaProperty.name == key){
-            camundaProperties.values[i].value = value;
-            isExist = true;
-            break;
+        console.log(camundaProperties);
+        // 暂时用一个非常丑陋的方式避免undefined
+        if (camundaProperties.$children == undefined) {
+          for (var i = 0; i < camundaProperties.values.length; i++) {
+            var camundaProperty = camundaProperties.values[i];
+            if (camundaProperty.name == key) {
+              camundaProperties.values[i].value = value;
+              isExist = true;
+              break;
+            }
+          }
+
+          if (!isExist) {
+            const newProperty = this.moddle.createAny("camunda:property");
+            newProperty.name = key;
+            newProperty.value = value;
+            camundaProperties.values.push(newProperty);
+          }
+        } else {
+          for (var i = 0; i < camundaProperties.$children.length; i++) {
+            var camundaProperty = camundaProperties.$children[i];
+            if (camundaProperty.name == key) {
+              camundaProperties.$children[i].value = value;
+              isExist = true;
+              break;
+            }
+          }
+
+          if (!isExist) {
+            const newProperty = this.moddle.createAny("camunda:property");
+            newProperty.name = key;
+            newProperty.value = value;
+            camundaProperties.$children.push(newProperty);
           }
         }
 
-        if(!isExist){
-          const newProperty =  this.moddle.createAny('camunda:property');
-          newProperty.name = key;
-          newProperty.value = value;
-          camundaProperties.values.push(newProperty);
-        }
-      }else{
-        const newProperties = this.moddle.createAny('camunda:properties');
+        extensionElements = this.moddle.create("bpmn:ExtensionElements", {
+          values: [camundaProperties],
+        });
 
+      } else {
+        const newProperties = this.moddle.createAny("camunda:properties");
+        const newProperty = this.moddle.createAny("camunda:property");
+        newProperty.name = key;
+        newProperty.value = value;
         newProperties.$children = [];
         newProperties.$children.push(newProperty);
-        console.log(newProperties)
+        console.log(newProperties);
 
-        extensionElements =  this.moddle.create('bpmn:ExtensionElements',{values:[newProperties]});
+        extensionElements = this.moddle.create("bpmn:ExtensionElements", {
+          values: [newProperties],
+        });
       }
 
-      this.modeling.updateProperties(element,{
-        extensionElements: extensionElements
+      this.modeling.updateProperties(element, {
+        extensionElements: extensionElements,
       });
 
       /* const newProperty =  this.moddle.createAny('camunda:property');
@@ -450,58 +563,61 @@ export default {
  */
     },
 
-    showProcessEditPanel(){
-           
-            /* if(this.propertyObj instanceof AbstractTask){
+    showProcessEditPanel() {
+      /* if(this.propertyObj instanceof AbstractTask){
                 this.getTaskVariable();
             } */
 
-            this.processEditPanel = true;
+      this.processEditPanel = true;
     },
 
-    addParticipant(){
-            var par;
-            //任务添加办理人
-                var selectedItem = this.$refs.participantSelector.getSelectedItem();
-                // console.log(" addParticipant selectedItem",selectedItem);
-                if(selectedItem==null) {
-                  this.$Message.info("未选择用户/用户组");
-                  return;
-                }
+    addParticipant() {
+      var par;
+      //任务添加办理人
+      var selectedItem = this.$refs.participantSelector.getSelectedItem();
+      // console.log(" addParticipant selectedItem",selectedItem);
+      if (selectedItem == null) {
+        this.$Message.info("未选择用户/用户组");
+        return;
+      }
 
-                if(selectedItem.type == 'launcher'){
-                    for(let i = 0; i < this.propertyObj.participants.length; i++){
-                        if(this.propertyObj.participants[i].participantType == 'launcher'){
-                            this.$Message.info("请勿重复添加发起人");
-                            this.$refs.participantSelector.recovery();return;
-                        }
-                    }
-                    par = {'participantType': 'launcher', 'name': '','oid':''};
-                }else if(selectedItem.value == '000'){
-                    this.$Message.info("无法添加‘无组织用户’组");
-                    this.$refs.proprietorSelector.recovery();
-                    return;
-                }else{ 
-                    for(let i = 0; i < this.propertyObj.participants.length; i++){
-                        if(this.propertyObj.participants[i].oid == selectedItem.value){
-                            this.$Message.info("请勿重复添加该用户/用户组");
-                            this.$refs.participantSelector.recovery();return;
-                        }
-                    }
-                    par = {'participantType': selectedItem.type, 'name':selectedItem.name,'displayName': selectedItem.label,'oid':selectedItem.value};
-                }
-                console.log("par",par);
-                
-                this.propertyObj.participants.push(par);   
-                this.propertyObj.assignee = par.name;
-                this.changeAssignee()
+      if (selectedItem.type == "launcher") {
+        for (let i = 0; i < this.propertyObj.participants.length; i++) {
+          if (this.propertyObj.participants[i].participantType == "launcher") {
+            this.$Message.info("请勿重复添加发起人");
+            this.$refs.participantSelector.recovery();
+            return;
+          }
+        }
+        par = { participantType: "launcher", name: "", oid: "" };
+      } else if (selectedItem.value == "000") {
+        this.$Message.info("无法添加‘无组织用户’组");
+        this.$refs.proprietorSelector.recovery();
+        return;
+      } else {
+        for (let i = 0; i < this.propertyObj.participants.length; i++) {
+          if (this.propertyObj.participants[i].oid == selectedItem.value) {
+            this.$Message.info("请勿重复添加该用户/用户组");
+            this.$refs.participantSelector.recovery();
+            return;
+          }
+        }
+        par = {
+          participantType: selectedItem.type,
+          name: selectedItem.name,
+          displayName: selectedItem.label,
+          oid: selectedItem.value,
+        };
+      }
+      console.log("par", par);
 
-                this.$refs.participantSelector.recovery();
-         
-        },
+      this.propertyObj.participants.push(par);
+      this.propertyObj.assignee = par.name;
+      this.changeAssignee();
 
+      this.$refs.participantSelector.recovery();
+    },
   },
-
 };
 </script>
 

@@ -71,15 +71,23 @@ public class EngineContext {
         return ret;
     }
 
-    public String commitTask(String taskId){
+    public String commitTask(String taskId, String paramsStr){
         String url = "http://127.0.0.1:8888/engine-rest/task/{id}/complete";
         JSONObject requestBody = new JSONObject();
         System.out.println("commitTask taskId:" + taskId);
+        JSONObject object = new JSONObject();
+        JSONObject params = new JSONObject();
+        params.put("value", paramsStr);
+        params.put("type", "json");
+        //这个属性名需要定 todo
+        object.put("t1",params);
+        requestBody.put("variables", object);
         ResponseEntity<String> response = new RestTemplateUtils().post(url, requestBody, String.class, taskId);
         System.out.println(response.getStatusCode());
 
-        System.out.println("commitTask body()" +response.getBody());
-        return response.getBody();
+        if (response.getStatusCodeValue() == 204)
+            return "true";
+        else return String.valueOf(response.getStatusCodeValue());
     }
 
 }

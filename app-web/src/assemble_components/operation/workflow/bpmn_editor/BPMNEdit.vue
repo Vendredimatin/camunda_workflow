@@ -356,7 +356,7 @@ export default {
     loadElements(){
       const elementRegistry = this.bpmnModeler.get("elementRegistry");
       const elements = elementRegistry.getAll();  
-
+      this.propertyObjs = new Map();
       for(var i = 0; i < elements.length; i++){
         var element = elements[i];
         var businessObject = element.businessObject;
@@ -369,6 +369,7 @@ export default {
           newPropertyObj.participants = [];
           newPropertyObj.assignee = businessObject.assignee;
           if(businessObject.extensionElements != undefined){
+            console.log("businessObject", businessObject);
             var camundaProperties = businessObject.extensionElements.values[0].values;
             for(var j = 0; j < camundaProperties.length; j++){
               var camundaProperty = camundaProperties[j];
@@ -392,6 +393,7 @@ export default {
       const that = this
       this.bpmnModeler.on('commandStack.changed', function() {
         that.saveDiagram(function(err, xml) {
+          that.loadElements();
           console.log(xml);
         })
       })

@@ -1,5 +1,6 @@
 package edu.thss.platform.newService;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import edu.thss.platform.dao.wfprocess.NewWfProcessInstanceDao;
@@ -114,7 +115,7 @@ public class Server {
 
     public String commitTask(String proInstanceId, String taskInstanceId, String userId, String userDisplayName, String userIp, String newUserId, String paramValues, String comment) {
         String success = "0";
-        success = engineContext.commitTask(taskInstanceId);
+        success = engineContext.commitTask(taskInstanceId, paramValues);
         return  success; // success
     }
 }
