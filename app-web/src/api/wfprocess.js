@@ -104,8 +104,14 @@ export const sendCommand = (data) => {
 
 };
 
+//提交任务
 export const commitTask = (params) => {
     return axios.post(`${baseObjOther}/workflow/runtime/process-instance-commit`,params).then(res => res.data);
+};
+
+//移交任务
+export const transferTask = (params) => {
+    return axios.post(`${baseObjOther}/workflow/runtime/process-instance-transfer`,params).then(res => res.data);
 };
 
 // 删除流程实例

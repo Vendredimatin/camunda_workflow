@@ -62,6 +62,17 @@
         </div>
       </div>
 
+      <div v-show="propertyObj.type == 'bpmn:BoundaryEvent'">
+        <div>
+          <label>id</label>
+          <span>{{ propertyObj.id }}</span>
+        </div>
+        <div>
+          <p class="margin1">定时器定义</p>
+          <Input placeholder="Expression" @on-change="changeTimerDefinition" />
+        </div>
+      </div>
+
       <div v-show="propertyObj.type == 'bpmn:UserTask'">
         <div>
           <label>id</label>
@@ -99,6 +110,15 @@
         <div>
           <p class="margin1">分配人</p>
           <Input :value="propertyObj.assignee" />
+        </div>
+
+        <div>
+          <p class="margin1">候选人</p>
+          <Input v-model="propertyObj.candidateUsers" @on-change="changeProperty($event,candidateUsersType)"/>
+        </div>
+        <div>
+          <p class="margin1">候选组</p>
+          <Input v-model="propertyObj.candidateGroups" @on-change="changeProperty($event,candidateGroupsType)"/>
         </div>
 
         <div class="margin1">
@@ -242,6 +262,8 @@ export default {
       selectedClass: null,
       selectedView: null,
       selectViews: null,
+      candidateUsersType: "candidateUsers",
+      candidateGroupsType: "candidateGroups",
       haveAdvancedProperties: true,
       scrollHeight: 1000,
       processEditPanel: false,
@@ -404,10 +426,11 @@ export default {
      * @param { Object } 要更新的属性, 例如 { name: '' }
      */
     updateProperties(properties) {
-      const { modeler, element } = this;
-      const modeling = modeler.get("modeling");
-      modeling.updateProperties(element, properties);
+      const elementRegistry = this.modeler.get("elementRegistry");
+      const element = elementRegistry.get(this.propertyObj.id);
+      this.modeling.updateProperties(element, properties);
     },
+
     getEntities() {
       let that = this;
       getAllEntities().then((res) => {
@@ -458,12 +481,42 @@ export default {
       const elementRegistry = this.modeler.get("elementRegistry");
       const SequenceFlow = elementRegistry.get(this.propertyObj.id);
       var conditionExpression = this.moddle.create("bpmn:FormalExpression", {
-        body: expression,
+        body: expression, 
       });
 
       this.modeling.updateProperties(SequenceFlow, {
         conditionExpression: conditionExpression,
       });
+    },
+
+    changeProperty(event, type){
+      console.log(event, type);
+      const value = event.target.value;
+
+      let properties = {};
+      properties[type] = value;
+
+      this.updateProperties(properties);
+    },
+
+    changeTimerDefinition(event){
+      let timeDuration = event.target.value;
+      console.log("timeDuration", timeDuration);
+
+      const elementRegistry = this.modeler.get("elementRegistry");
+      const boundaryEvent = elementRegistry.get(this.propertyObj.id);
+      console.log("boudaryEvent", boundaryEvent);
+      console.log(boundaryEvent.businessObject.eventDefinitions[0]);
+      const timerEventDefinition = boundaryEvent.businessObject.eventDefinitions[0];
+      console.log(timerEventDefinition); 
+      var formalExpression  = this.moddle.create("bpmn:FormalExpression", {
+        body: timeDuration,
+      });
+
+      formalExpression.$parent = timerEventDefinition
+
+      timerEventDefinition.set("timeDuration", formalExpression);
+
     },
 
     changeSelectedView(value) {

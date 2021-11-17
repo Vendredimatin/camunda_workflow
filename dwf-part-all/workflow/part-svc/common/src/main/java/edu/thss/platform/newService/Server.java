@@ -56,7 +56,6 @@ public class Server {
                                            String enClassInstanceId) throws Exception {
         NewWfProcessInstance instance = null;
 
-
         ReleasedWfProcessTemplate template= releasedWfProcessTemplateDao.findById(Long.parseLong(templateId)).get();
 
         if(enClassInstanceId==null || enClassInstanceId.equals("")){
@@ -79,13 +78,13 @@ public class Server {
         return instance;
     }
 
-    public Integer getTaskCount(String userName, String filerStatus, String condition) {
-        Integer count = engineContext.getTaskCount(userName);
+    public Integer getTaskCount(String userName, String filerStatus, String condition, List<String> groups) {
+        Integer count = engineContext.getTaskCount(userName, groups);
         return count;
     }
 
-    public List<Map<String,String>> getTaskList(String userName, String filerStatus, Integer pageIndex, Integer pageSize, String condition) {
-        List<Map<String,String>> tasks = engineContext.getTaskList(userName);
+    public List<Map<String,String>> getTaskList(String userName, String filerStatus, Integer pageIndex, Integer pageSize, String condition, List<String> groups) {
+        List<Map<String,String>> tasks = engineContext.getTaskList(userName, groups);
 
         List<Map<String, String>> ret = new ArrayList<>();
         for (int i = 0; i < tasks.size(); i++){
@@ -117,5 +116,13 @@ public class Server {
         String success = "0";
         success = engineContext.commitTask(taskInstanceId, paramValues);
         return  success; // success
+    }
+
+    public String transferTask(String proInstanceId, String taskInstanceId, String userId, String userDisplayName, String userIp, String newUserId,String newUserName, String paramValues, String comment) {
+        //String userName = dwfContext.getUserName(newUserId);
+        String success = engineContext.transferTask(taskInstanceId, newUserName);
+        if (!success.equals("500"))
+            return "true";
+        else return "false";
     }
 }

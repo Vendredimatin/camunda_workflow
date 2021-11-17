@@ -104,8 +104,7 @@
             </div>
              <div v-if="editable" style="position:fixed;bottom:20px;width:360px" >
                 <div style="height: 35px;">
-                    <Button class="self-btn" v-for="(i,index) in keywords" @click="clickKeywords(index)" 
-                        style="border-radius:2px; font-size:12px !important;border:1px solid rgba(151,151,151,1); padding:2px 3px; margin-right:3px;">{{i}}</Button>
+                    <Button class="self-btn" v-for="(i,index) in keywords" @click="clickKeywords(index)" style="border-radius:2px; font-size:12px !important;border:1px solid rgba(151,151,151,1); padding:2px 3px; margin-right:3px;">{{i}}</Button>
                     <Button class="self-btn" :disabled="inputEmpty" style="float:right;" size="small" @click="sendComment(commentInput, 1)">发送</Button>
                     <div class="send-picture-button" style="float:right;position:relative;margin-right: 10px;">
                         <Button class="self-btn" type="primary" style="" size="small" icon="ios-image-outline"></Button>

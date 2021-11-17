@@ -31,7 +31,7 @@ public class NewWfProcessTemplate {
     private String authorId;
 
     @Column(name = "Lastupdate", columnDefinition = "timestamp")
-    private Timestamp lastupdate;
+    private Timestamp lastUpdate;
 
     @Column(name = "BindEnClassName", columnDefinition = "varchar(32)")
     private String bindEnClassName;

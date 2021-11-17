@@ -100,7 +100,7 @@
                         <div :title="allEnClassName[pro.bindEnClassName]+'（'+pro.bindEnClassName+'）'" class="bind-class-name">
                             绑定类：{{showBindClassName(pro.bindEnClassName)}}
                         </div>
-                        <div >更新时间：{{ new Date(pro.lastupdate).format("yyyy-MM-dd hh:mm:ss") }}</div>
+                        <div >更新时间：{{ new Date(pro.lastUpdate).format("yyyy-MM-dd hh:mm:ss") }}</div>
                     </Card>
                 </span>
                 
@@ -258,7 +258,7 @@ export default {
             getTemplates(this.store.state.user.userId).then( res =>{
                 console.log("loadProcessList res",res);
                 that.allProcessList = res.data;
-                that.allProcessList.sort((a,b) => b.lastupdate - a.lastupdate);
+                that.allProcessList.sort((a,b) => b.lastUpdate - a.lastUpdate);
                 that.allProcessList.forEach(pro=>{
                     pro.bindEnClassDisplayName = pro.bindEnClassName +'（'+this.allEnClassName[pro.bindEnClassName];+'）';
                 });
@@ -318,10 +318,10 @@ export default {
         sortByTime(){
             if(this.sortOrder ==0 ){
                 this.sortOrder = 1;
-                this.allProcessList.sort((a,b) => a.lastupdate - b.lastupdate);
+                this.allProcessList.sort((a,b) => a.lastUpdate - b.lastUpdate);
             }else{
                 this.sortOrder = 0;
-                this.allProcessList.sort((a,b) => b.lastupdate - a.lastupdate);
+                this.allProcessList.sort((a,b) => b.lastUpdate - a.lastUpdate);
             }
             this.refresh();
            
@@ -396,7 +396,9 @@ export default {
                 releaserId: that.store.state.user.userId,
                 bindEnClassName : that.processList[that.currTemplate].bindEnClassName,
                 bpmnXml : that.processList[that.currTemplate].bpmnXml,
-                processName : that.processList[that.currTemplate].name
+                processName : that.processList[that.currTemplate].name,
+                lastUpdate : new Date().getTime()
+
             };
             console.log(template);
             releaseTemplate(template).then(res => {

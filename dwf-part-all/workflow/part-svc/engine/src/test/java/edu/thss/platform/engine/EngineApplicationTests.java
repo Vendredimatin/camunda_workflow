@@ -13,6 +13,7 @@ import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperty;
 import org.camunda.bpm.model.xml.instance.ModelElementInstance;
 import org.camunda.spin.impl.json.jackson.JacksonJsonNode;
 import org.camunda.spin.json.SpinJsonNode;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -60,9 +61,9 @@ class EngineApplicationTests {
         TaskService taskService = processEngine.getTaskService();
 
 
-        String assignee2 = "wangwu";
+        String assignee2 = "zhaoliu";
         List<Task> tasks2 = taskService.createTaskQuery().taskAssignee(assignee2).list();
-        Task task1 = tasks2.get(0);
+        Task task1 = tasks2. get(0);
         Task task2 = tasks2.get(1);
 
         getExetensionElements(task1);
@@ -104,15 +105,25 @@ class EngineApplicationTests {
 
     @Test
     public void getProcessVariables(){
-        String processInstanceId = "13311e78-3c7c-11ec-97ab-0205857feb80";//"2b35d66d-3707-11ec-bf3d-32b49eea4695";//"c8770f28-3706-11ec-bf3d-32b49eea4695";//"56dc8748-3705-11ec-bf3d-32b49eea4695";//"aaa68541-3700-11ec-bf3d-32b49eea4695";//"b9e83994-3188-11ec-9ffe-32b49eea4695";
+        String processInstanceId = "858a109a-42be-11ec-a3ab-0205857feb80";//"13311e78-3c7c-11ec-97ab-0205857feb80";//"2b35d66d-3707-11ec-bf3d-32b49eea4695";//"c8770f28-3706-11ec-bf3d-32b49eea4695";//"56dc8748-3705-11ec-bf3d-32b49eea4695";//"aaa68541-3700-11ec-bf3d-32b49eea4695";//"b9e83994-3188-11ec-9ffe-32b49eea4695";
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         TaskService taskService = processEngine.getTaskService();
         RuntimeService runtimeService = processEngine.getRuntimeService();
 
-        JacksonJsonNode node = (JacksonJsonNode) runtimeService.getVariable(processInstanceId, "t1");
-        SpinJsonNode spinJsonNode = node.prop("woTitle");
-        System.out.println(spinJsonNode.value());
-        System.out.println(node.prop("x").value());
+        //DateTime dateTime = (DateTime) runtimeService.getVariable(processInstanceId, "timeVariable2");
+        String dateTime1 = (String) runtimeService.getVariable(processInstanceId, "timeVariable1");
+        //int a = (Integer) runtimeService.getVariable(processInstanceId, "minute");
+        String dateTime2 = (String) runtimeService.getVariable(processInstanceId, "timeVariable2");
+        String dateTime3 = (String) runtimeService.getVariable(processInstanceId, "timeVariable3");
+        //JacksonJsonNode node = (JacksonJsonNode) runtimeService.getVariable(processInstanceId, "t1");
+        //SpinJsonNode spinJsonNode = node.prop("woTitle");
+        //System.out.println(spinJsonNode.value());
+        //System.out.println(node.prop("x").value());
+        //System.out.println(dateTime);
+        //System.out.println(dateTime.toString("yyyy-MM-dd HH:mm:ss"));
+        System.out.println(dateTime1);
+        System.out.println(dateTime2);
+        System.out.println(dateTime3);
     }
 
 }

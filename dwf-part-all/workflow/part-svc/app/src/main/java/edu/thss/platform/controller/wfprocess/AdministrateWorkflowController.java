@@ -169,8 +169,9 @@ public class AdministrateWorkflowController {
 			Integer pageIndex = (Integer) params.get("pageIndex");
 			Integer pageSize = (Integer) params.get("pageSize");
 			String condition = (String) params.get("condition");
+			List<String> groups = (List) params.get("groups");
 			if (filerStatus == null || filerStatus.length() == 0) filerStatus="[1]";
-			List<Map<String,String>> tasks = server.getTaskList(userName, filerStatus, pageIndex, pageSize, condition);
+			List<Map<String,String>> tasks = server.getTaskList(userName, filerStatus, pageIndex, pageSize, condition, groups);
 			return new ResponseMsg<>(tasks);
 		} catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
 	}
@@ -193,26 +194,6 @@ public class AdministrateWorkflowController {
 	}
 
 
-	/*@ApiOperation(value = "获取用户的任务列表个数")
-	@PostMapping(path = "task-instances-count")
-	public ResponseMsg<Integer> getManualTaskInstancesCount(@ApiParam(value = "请求示例：\n```\n " +
-			"{\n" +
-			"    \"userId\":\"53B68E57C5D8D94F937A1F0354CAB473\",\n" +
-			"    \"filerStatus\":\"[1,2,3]\",\n" +
-			"    \"condition\":\"\",\n" +
-			"}\n```", required = true) @RequestBody Map<String, Object> params) {
-		try {
-			String userId = (String) params.get("userId");
-			if (!SaaSServer.getInstance().hasUserByOid(userId)) throw new PlatformException(String.format("不存在oid为%s的用户", userId));
-			String filerStatus = (String) params.get("filerStatus");
-			String condition = (String) params.get("condition");
-
-			if (filerStatus == null || filerStatus.length() == 0) filerStatus="[1]";
-			Integer len  = SaaSServer.getInstance().manualTaskInstanceCount(userId,filerStatus, condition);
-			return new ResponseMsg(len);
-		} catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
-	}*/
-
 	@ApiOperation(value = "获取用户的任务列表个数")
 	@PostMapping(path = "task-instances-count")
 	public ResponseMsg<Integer> getManualTaskInstancesCount(@ApiParam(value = "请求示例：\n```\n " +
@@ -227,34 +208,14 @@ public class AdministrateWorkflowController {
 			if (!SaaSServer.getInstance().hasUserByOid(userId)) throw new PlatformException(String.format("不存在oid为%s的用户", userId));
 			String filerStatus = (String) params.get("filerStatus");
 			String condition = (String) params.get("condition");
-
+			List<String> groups = (List<String>) params.get("groups");
+			System.out.println(groups);
 			if (filerStatus == null || filerStatus.length() == 0) filerStatus="[1]";
-			Integer len  = server.getTaskCount(userName,filerStatus, condition);
+			Integer len  = server.getTaskCount(userName,filerStatus, condition, groups);
 			return new ResponseMsg(len);
 		} catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
 	}
 
-
-	/*@ApiOperation(value = "获取绑定某类的已发布模版列表")
-	@GetMapping(path = "released-templates-classname")
-	public ResponseMsg<List<ReleasedWfProcess>> getRlProListByClassName(@ApiParam(value = "类名", required = true)@PathVariable String className) {
-		try {
-			ReleasedWfProcessBlo releasedWfProcessBlo = new ReleasedWfProcessBlo();
-			List<ReleasedWfProcess> processes = releasedWfProcessBlo.getRlProListByEnClass(className);
-			return new ResponseMsg<>(processes);
-		} catch(Exception e) { return new ResponseMsg<>(404); }
-	}
-	
-	@ApiOperation(value = "基于已有对象发起流程时获取可发起的模版")
-	@PostMapping(path = "released-templates-luanch")
-	public ResponseMsg<List<ReleasedWfProcess>> getRlProListByEnClass(@ApiParam(value = "类名", required = true) @RequestParam String classname, 
-																	  @ApiParam(value = "userId", required = true) @RequestParam String userId) {
-		try {
-			ReleasedWfProcessBlo releasedWfProcessBlo = new ReleasedWfProcessBlo();
-			List<ReleasedWfProcess> list = releasedWfProcessBlo.getRlProListToLuanch(classname,userId);
-			return new ResponseMsg<>(list);
-		} catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
-	}*/
 
 
 	@ApiOperation(value = "通过流程实例id获得流程实例")
@@ -299,23 +260,7 @@ public class AdministrateWorkflowController {
 		} catch (Exception e) { e.printStackTrace(); }
 		return new ResponseMsg<>(404);
 	}
-	
-	/*private AdminSearchResult parseAdminSearchResult(JSONObject json) throws Exception {
-		AdminSearchResult r = new AdminSearchResult();
-		r.setInstanceId(json.getString("instanceId"));
-		r.setDefinitionId(json.getString("definitionId"));
-		if (!json.isNull("processName")) { r.setProcessName(json.getString("processName")); }
-		if (!json.isNull("processVersion")) { r.setProcessVersion(json.getString("processVersion")); }
-		if (!json.isNull("status")) { r.setStatus(json.getInt("status")); }
-		if (!json.isNull("launcher")) { r.setLauncher(json.getString("launcher")); }
-		if (!json.isNull("idType")) { r.setIdType(json.getString("idType")); }
-		if (!json.isNull("idNumber")) { r.setIdNumber(json.getString("idNumber")); }
-		if (!json.isNull("startTime")) { r.setStartTime(json.getLong("startTime")); }
-		if (!json.isNull("suspensionTime")) { r.setSuspensionTime(json.getLong("suspensionTime")); }
-		if (!json.isNull("updateTime")) { r.setUpdateTime(json.getLong("updateTime")); }
-		if (!json.isNull("server")) { r.setServer(json.getString("server")); }
-		return r;
-	}*/
+
 
 	private AdminSearchResultPage createPage(List<AdminSearchResult> list, int pn, int psz) {
 		AdminSearchResultPage page = new AdminSearchResultPage(pn, psz);

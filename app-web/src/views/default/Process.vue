@@ -386,15 +386,6 @@ export default {
           that.$Message.error("提交失败");
         }
       });
-      /* sendCommand(params).then(re=>{
-                            if(re.success){
-                                that.Message.success("提交成功");
-                                that.onTabRemove();
-                            }else{
-                                that.$Message.error("提交失败");
-                            }
-                        });
- */
     },
     onTabRemove() {
       let that = this;

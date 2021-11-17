@@ -168,15 +168,8 @@ public class BuildtimeWorkflowController {
     @PostMapping(path = "delete-process-template/{templateId}")
     public ResponseMsg deleteWfProcessTemplate(@ApiParam(value = "流程模版Id", required = true) @PathVariable String templateId) {
         try {
-            BuildtimeWfProcessBlo buildtimeWfProcessBlo = new BuildtimeWfProcessBlo();
-            buildtimeWfProcessBlo.deleteWfProcess(templateId, environmentBuilder.buildEnvironment());
+            newWfProcessTemplateDao.deleteById(Long.valueOf(templateId));
             return new ResponseMsg();
-            // List<String> wfIds = buildtimeWfProcessBlo.queryAllUnReleasedWfProcessId();
-            // if (wfIds.contains(templateId)) {
-            //   System.out.println("environmentBuilder.buildEnvironment()"+environmentBuilder.buildEnvironment().getUserOid());
-            // 	buildtimeWfProcessBlo.deleteWfProcess(templateId, environmentBuilder.buildEnvironment());
-            // 	return new ResponseMsg();
-            // } else return new ResponseMsg(404,"该模版不存在");
         } catch (Exception e) {
             e.printStackTrace();
             throw new PlatformException(e.getMessage());

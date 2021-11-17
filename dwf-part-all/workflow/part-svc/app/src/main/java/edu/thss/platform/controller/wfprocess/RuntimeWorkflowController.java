@@ -256,6 +256,40 @@ public class RuntimeWorkflowController {
         } catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
     }
 
+    @ApiOperation(value = "对任务进行进行移交")
+    @PostMapping(path = "process-instance-transfer")
+    public ResponseMsg transferTask(@ApiParam(value = "请求示例：\n```\n " +
+            "{\n" +
+            "    \"proInstanceId\":\"流程实例Id\",\n" +
+            "    \"taskInctanceId\":\"任务实例Id\",\n" +
+            "    \"userId\":\"53B68E57C5D8D94F937A1F0354CAB473\",\n" +
+            "    \"userDisplayName\":\"工作流用户\",\n" +
+            "    \"userIp\":\"提交并指派下一步执行人: userip=\"&&&1&&&被指派人id&&&被指派人名\"\",\n" +
+            "    \"newUserId\":\"移交给的用户Id\",\n" +
+            "    \"paramValues\":\"对象实例数据\",\n" +
+            "    \"comment\":\"备注内容\",\n" +
+            "}\n```", required = true) @RequestBody Map<String, Object> param) {
+
+        String proInstanceId = (String)param.get("proInstanceId");
+        String taskInstanceId = (String)param.get("taskInstanceId");
+        String userId = (String)param.get("userId");
+        String userDisplayName = (String)param.get("userDisplayName");
+        String newUserName = (String)param.get("newUserName");
+        String userIp = (String)param.get("userIp");
+        String newUserId = (String)param.get("newUserId");
+        String paramValues = (String)param.get("paramValues");
+        String comment = (String)param.get("comment");
+
+        System.out.println("transfer task paramValues:" + paramValues);
+
+        try {
+            String success = server.transferTask(proInstanceId, taskInstanceId, userId,userDisplayName,userIp, newUserId,newUserName,paramValues,comment);
+            System.out.println("success:"+success);
+            if (success.equals("true")) return new ResponseMsg();
+            else return new ResponseMsg<>(404);
+        } catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
+    }
+
     @ApiOperation(value = "删除流程实例")
     @PostMapping(path = "process-instance/{proInstanceId}/delete")
     public ResponseMsg deleteProcessInstance(@ApiParam(value = "流程实例Id", required = true) @PathVariable String proInstanceId) {

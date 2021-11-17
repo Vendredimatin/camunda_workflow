@@ -491,7 +491,7 @@ export default {
       releasedTemplate.description = that.releaseData.versionnote;
       releasedTemplate.releaser = that.store.state.user.username;
       releasedTemplate.releaserId = that.store.state.user.userId;
-      releasedTemplate.releaseDate = new Date().getTime();
+      releasedTemplate.lastUpdate = new Date().getTime();
 
       this.bpmnModeler.saveXML({ format: true }, (err, xml) => {
         if (xml) {
@@ -515,6 +515,7 @@ export default {
 
       this.propertyWfprocess.releaser = that.store.state.user.username;
       this.propertyWfprocess.releaserId = that.store.state.user.userId;
+      this.propertyWfprocess.lastUpdate = new Date().getTime();
 
       console.log("save", this.propertyWfprocess);
 

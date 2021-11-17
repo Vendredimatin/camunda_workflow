@@ -3,8 +3,10 @@ package edu.thss.platform.newService.dwf;
 import edu.thss.platform.service.omf.ItemClassAccessService;
 import edu.thss.platform.service.omf.ObjectAccessService;
 import edu.thss.platform.service.wfprocess.runtime.engine.util.ProcessInstanceLoader;
+import edu.thss.platform.util.RestTemplateUtils;
 import edu.thss.platform.utils.BeanHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,5 +33,13 @@ public class DWFContext {
         List<Map<String, Object>> result = itemClassAccessService.addEntityObjects(bindEnClassName, objs);
         String newEnObjId = (String)result.get(0).get("oid");
         return newEnObjId;
+    }
+
+    public String getUserName(String oid) {
+        String url = "http://localhost:9090/dwf/v1/org/users/{oid}";
+
+        ResponseEntity<Map> entity = RestTemplateUtils.get(url, Map.class, oid);
+        String userName = (String) entity.getBody().get("name");
+        return userName;
     }
 }

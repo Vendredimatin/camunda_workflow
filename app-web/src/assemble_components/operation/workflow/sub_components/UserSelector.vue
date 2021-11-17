@@ -74,26 +74,32 @@ export default {
        // 初始化：获取所有用户
       getAllUsers().then(res => {
           this.allUserList = res.data.data;
+
         }).catch(error => {
           this.$Message.error("获取用户失败：" + error.response.data.message);
         });
     },
     getSelected() {
       console.log("this.assginUserId", this.assginUserId);
+      console.log(this);
       var displayName;
+      var userName;
       var that = this;
       for (var i = 0; i < this.allUserList.length; i++) {
         if (this.allUserList[i].oid == that.assginUserId) {
           displayName = that.allUserList[i].displayName;
+          userName = that.allUserList[i].name;
+          console.log("123", that.allUserList[i]);
           break;
         }
       }
 
       var user = {
         userId: this.assginUserId,
-        userName: displayName,
+        userName: userName,
         displayName: displayName,
         groupId: this.groupId,
+
       };
 
       return user;
