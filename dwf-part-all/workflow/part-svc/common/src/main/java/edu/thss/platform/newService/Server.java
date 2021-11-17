@@ -10,10 +10,6 @@ import edu.thss.platform.domain.wfprocess.ReleasedWfProcessTemplate;
 
 import edu.thss.platform.newService.dwf.DWFContext;
 import edu.thss.platform.newService.engine.EngineContext;
-import edu.thss.platform.service.wfprocess.blo.runtime.wfprocessinstance.ProcessInstanceBlo;
-import edu.thss.platform.service.wfprocess.core.buildtime.wfprocess.ParticipationType;
-import edu.thss.platform.service.wfprocess.core.runtime.wfprocess.WfProcessInstance;
-import edu.thss.platform.service.wfprocess.core.runtime.workitem.WorkitemInfoDescriptor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

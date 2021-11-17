@@ -2,7 +2,6 @@ package edu.thss.platform.newService.dwf;
 
 import edu.thss.platform.service.omf.ItemClassAccessService;
 import edu.thss.platform.service.omf.ObjectAccessService;
-import edu.thss.platform.service.wfprocess.runtime.engine.util.ProcessInstanceLoader;
 import edu.thss.platform.util.RestTemplateUtils;
 import edu.thss.platform.utils.BeanHelper;
 import org.springframework.beans.factory.annotation.Autowired;
