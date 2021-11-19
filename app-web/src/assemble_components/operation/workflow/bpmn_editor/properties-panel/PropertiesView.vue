@@ -54,11 +54,11 @@
         </div>
         <div>
           <p class="margin1">名称</p>
-          <Input placeholder="名称" @on-change="changeElementName" />
+          <Input v-model="propertyObj.name" placeholder="名称" @on-change="changeElementName" />
         </div>
         <div>
           <p class="margin1">表达式</p>
-          <Input placeholder="Expression" @on-change="changeExpression" />
+          <Input v-model="propertyObj.expression" placeholder="Expression" @on-change="changeExpression" />
         </div>
       </div>
 
@@ -128,6 +128,7 @@
           <Select
             v-model="propertyObj.selectedView"
             @on-change="changeSelectedView"
+
             clearable
             filterable
           >
@@ -160,6 +161,56 @@
         >
       </div>
 
+      <div v-show="propertyObj.type == 'bpmn:ScriptTask'">
+        <div>
+          <label>id</label>
+          <span>{{ propertyObj.id }}</span>
+        </div>
+        <!-- <div>当前状态：{{propertyObj.statusType}}</div>
+              <div v-show="propertyObj.status == 3">
+                  <div>开始时间：{{new Date(propertyObj.startTime).format("yyyy-MM-dd hh:mm:ss")}}</div>
+              </div> -->
+        <div>
+          <p class="margin1">名称</p>
+          <Input
+            v-model="propertyObj.name"
+            @on-change="changeElementName"
+            placeholder="名称"
+          />
+        </div>
+        <div>
+          <p class="margin1">Script format</p>
+          <Select
+            v-model="propertyObj.scriptFormat"
+            @on-change="changeProperty($event, scriptFormatType)"
+            clearable
+            filterable
+          >
+            <Option
+              v-for="item in scriptFormats"
+              :value="item.language"
+              :key="item.language"
+              >{{ item.language }}
+            </Option>
+          </Select>
+        </div>
+
+
+        <div>
+          <p class="margin1">Script</p>
+          <Input v-model="propertyObj.script" type="textarea"  @on-change="changeScript"/>
+        </div>
+
+        <div>
+          <p class="margin1">Result Variable</p>
+          <Input
+            v-model="propertyObj.resultVariable" 
+            @on-change="changeProperty($event, resultVariableType)"
+            placeholder="结果变量"
+          />
+        </div>
+      </div>
+
       <div v-show="propertyObj.type == 'bpmn:ExclusiveGateway'">
         <div>
           <label>id</label>
@@ -168,17 +219,6 @@
         <div>
           <p class="margin1">名称</p>
           <Input placeholder="名称" />
-        </div>
-        <div>
-          <p class="margin1">目标类:</p>
-          <Select v-model="selectedClass" clearable filterable>
-            <Option
-              v-for="entity in entities"
-              :value="entity.className"
-              :key="entity.className"
-              >{{ entity.className }}
-            </Option>
-          </Select>
         </div>
         <div>
           <p class="margin1">监听</p>
@@ -191,10 +231,6 @@
           <label>id</label>
           <span>{{ propertyObj.id }}</span>
         </div>
-        <!-- <div>当前状态：{{propertyObj.statusType}}</div>
-              <div v-show="propertyObj.status == 3">
-                  <div>开始时间：{{new Date(propertyObj.startTime).format("yyyy-MM-dd hh:mm:ss")}}</div>
-              </div> -->
         <div>
           <p class="margin1">名称</p>
           <Input placeholder="名称" />
@@ -259,11 +295,11 @@ export default {
       element: null,
       entities: null,
       forms: null,
-      selectedClass: null,
-      selectedView: null,
       selectViews: null,
       candidateUsersType: "candidateUsers",
       candidateGroupsType: "candidateGroups",
+      scriptFormatType :"scriptFormat",
+      resultVariableType :"camunda:resultVariable",
       haveAdvancedProperties: true,
       scrollHeight: 1000,
       processEditPanel: false,
@@ -287,6 +323,15 @@ export default {
         { label: "UserTask", value: "bpmn:UserTask" },
       ],
       taskType: "",
+      serviceTaskImpl:{
+        name:''
+      },
+      serviceTaskImplList:[
+        {name : 'Expression'}, {name : 'External'}, {name : 'connector'}
+      ],
+      scriptFormats:[
+        {language:'groovy'}, {language: 'javascript'}
+      ],
       participantCol: [
         {
           title: "类型",
@@ -447,14 +492,14 @@ export default {
       console.log("selectedClass", selectedClass);
       console.log("propertyObj", this.propertyObj);
       this.updateCamundaProperty(this.propertyObj.id, "enClass", selectedClass);
-
+      this.propertyObj.selectedClass = selectedClass;
       console.log("propertyObj", this.propertyObj);
 
+      let that = this;
       getViews(selectedClass).then((res) => {
         console.log(res.data.success);
         if (res.data.success) {
-          this.selectViews = res.data.data;
-          console.log(this.selectViews);
+          that.selectViews = res.data.data;
         }
       });
     },
@@ -477,7 +522,7 @@ export default {
     changeExpression(event) {
       let expression = event.target.value;
       console.log("expression", expression);
-
+      
       const elementRegistry = this.modeler.get("elementRegistry");
       const SequenceFlow = elementRegistry.get(this.propertyObj.id);
       var conditionExpression = this.moddle.create("bpmn:FormalExpression", {
@@ -489,9 +534,23 @@ export default {
       });
     },
 
+    changeScript(event){
+      let scriptStr = event.target.value;
+      console.log("script", scriptStr);
+
+      const elementRegistry = this.modeler.get("elementRegistry");
+      const scriptTask = elementRegistry.get(this.propertyObj.id);
+      console.log("scriptTask", scriptTask);
+
+      this.modeling.updateProperties(scriptTask, {
+        script: scriptStr,
+      });
+
+    },    
+
     changeProperty(event, type){
       console.log(event, type);
-      const value = event.target.value;
+      const value = event;
 
       let properties = {};
       properties[type] = value;
@@ -520,6 +579,7 @@ export default {
     },
 
     changeSelectedView(value) {
+      console.log("selectedView", value);
       if (value == undefined) return;
       let selectedView = value;
       console.log("selectedView", selectedView);

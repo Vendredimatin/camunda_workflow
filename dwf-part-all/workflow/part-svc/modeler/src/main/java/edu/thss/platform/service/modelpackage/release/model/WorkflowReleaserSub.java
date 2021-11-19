@@ -1,3 +1,4 @@
+/*
 package edu.thss.platform.service.modelpackage.release.model;
 
 import edu.thss.platform.service.modelpackage.release.util.PrintUtil;
@@ -259,3 +260,4 @@ public class WorkflowReleaserSub implements SubModelReleaser {
        else return null;
    }
 }
+*/

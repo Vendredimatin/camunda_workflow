@@ -459,7 +459,7 @@ export default {
             re[i].formName = re[i].viewName;
             re[i].submitterName = re[i].assignee;
             re[i].taskInstanceEnabledDateTime = re[i].created;
-            re[i].bindEnClassName = "WorkOrder";
+            re[i].bindEnClassName = re[i].enClass;
             // re[i].formName = re[i].
           }
           that.taskList = re;

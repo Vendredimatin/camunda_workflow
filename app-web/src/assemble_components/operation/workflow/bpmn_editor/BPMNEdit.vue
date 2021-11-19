@@ -357,6 +357,7 @@ export default {
       const elementRegistry = this.bpmnModeler.get("elementRegistry");
       const elements = elementRegistry.getAll();  
       this.propertyObjs = new Map();
+      console.log("elements", elements);
       for(var i = 0; i < elements.length; i++){
         var element = elements[i];
         var businessObject = element.businessObject;
@@ -371,6 +372,9 @@ export default {
           if(businessObject.extensionElements != undefined){
             console.log("businessObject", businessObject);
             var camundaProperties = businessObject.extensionElements.values[0].values;
+            if(camundaProperties == null){
+              camundaProperties = businessObject.extensionElements.values[0].$children;
+            }
             for(var j = 0; j < camundaProperties.length; j++){
               var camundaProperty = camundaProperties[j];
               if(camundaProperty.name == "enClass")
@@ -380,6 +384,9 @@ export default {
               }
             }
           }
+        }else if(element.type == "bpmn:SequenceFlow"){
+          if(businessObject.conditionExpression != null)
+            newPropertyObj.expression = businessObject.conditionExpression.body;
         }
         this.propertyObjs.set(element.id, newPropertyObj);
       }

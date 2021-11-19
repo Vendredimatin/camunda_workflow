@@ -1,3 +1,4 @@
+/*
 package edu.thss.platform.service.modelpackage.showup.components;
 
 import edu.thss.platform.service.modelpackage.showup.ShowUpItem;
@@ -46,3 +47,4 @@ public class WorkFlowShowUp implements Showable {
        return showUpItem;
    }
 }
+*/

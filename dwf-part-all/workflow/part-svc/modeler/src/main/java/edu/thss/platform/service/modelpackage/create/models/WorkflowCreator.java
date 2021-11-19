@@ -1,3 +1,4 @@
+/*
 package edu.thss.platform.service.modelpackage.create.models;
 
 import edu.thss.platform.service.modelpackage.create.ModelFileCreator;
@@ -55,3 +56,4 @@ public class WorkflowCreator implements ModelCreator{
        return res;
    }
 }
+*/

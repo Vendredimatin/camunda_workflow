@@ -1,3 +1,4 @@
+/*
 package edu.thss.platform.service.modelpackage.dependency.components.workflow;
 
 import edu.thss.platform.service.modelpackage.dependency.Analysable;
@@ -118,3 +119,4 @@ public class WorkFlowAnalyser implements Analysable {
        return res;
    }
 }
+*/
