@@ -1,5 +1,6 @@
 package edu.thss.platform.engine;
 
+import org.camunda.bpm.application.impl.ServletProcessApplication;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.ProcessInstance;

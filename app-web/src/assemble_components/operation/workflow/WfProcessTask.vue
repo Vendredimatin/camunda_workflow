@@ -166,7 +166,7 @@
 import $ from "jquery";
 import { forEach } from "@/libs/utils";
 import UserSelector from "@/views/workflow/sub_components/UserSelector";
-import { getUser, getEobjSingle } from "@/api/others";
+import { getUser, getEobjSingle, getExecute } from "@/api/others";
 import {
   getTaskInstCount,
   getManualTaskInstances,
@@ -554,32 +554,35 @@ export default {
     },
     // 在流程中打开
     async openTaskForm() {
-      var wfauthority = "submission";
-      // 待提交
-      /* if(this.currTask.taskInstanceStatus == 1){
-                var status =  await this.receiveTask();
-                if(status == 0){
-                    that.$Message.success("自动领取失败");
-                    return;
-                }
-            }
-            if(this.currTask.taskInstanceStatus == 3){
-                wfauthority = "assign"; //被抄送
-            } */
-
+      //先执行前处理操作
       let item = this.currTask;
 
-      this.root.openTab({
-        targetClass: item.bindEnClassName,
-        authority: item.formName + "_" + item.id,
-        conditionExpre: `and obj.oid='${item.enClassInstanceId}'`,
-        displayName: item.name,
-        viewName: item.formName,
-        action: "wfprocess",
-        params: "",
-        wfProcessInstanceId: item.wfProcessInstanceId,
-        taskId: item.id,
-        wfAuthority: wfauthority,
+      var operationName = item.beforeOperation;
+      let params = {
+        className: item.bindEnClassName,
+        objs: [],
+      };
+
+      let that = this;
+      getExecute(operationName, params).then((res) => {
+        console.log("执行前处理操作", res);
+        if (res.data.success) {
+          var wfauthority = "submission";
+          // 待提交
+
+          that.root.openTab({
+            targetClass: item.bindEnClassName,
+            authority: item.formName + "_" + item.id,
+            conditionExpre: `and obj.oid='${item.enClassInstanceId}'`,
+            displayName: item.name,
+            viewName: item.formName,
+            action: "wfprocess",
+            params: "",
+            wfProcessInstanceId: item.wfProcessInstanceId,
+            taskId: item.id,
+            wfAuthority: wfauthority,
+          });
+        }
       });
     },
     // 查看：在表单中打开但是不能编辑 priview
@@ -630,32 +633,32 @@ export default {
         let that = this;
 
         getUser(user.userId).then((res) => {
-            console.log(res.data);
-            var newUserName = res.data.data.name;
-            console.log(newUserName);
-            let param = {
-              cmd: "4",
-              proInstanceId: item.wfProcessInstanceId,
-              taskInstanceId: item.id,
-              userId: that.store.state.user.userId,
-              userDisplayName: user.displayName,
-              newUserId: user.userId,
-              comment: that.assignComment,
-              newUserName: newUserName,
-            };
+          console.log(res.data);
+          var newUserName = res.data.data.name;
+          console.log(newUserName);
+          let param = {
+            cmd: "4",
+            proInstanceId: item.wfProcessInstanceId,
+            taskInstanceId: item.id,
+            userId: that.store.state.user.userId,
+            userDisplayName: user.displayName,
+            newUserId: user.userId,
+            comment: that.assignComment,
+            newUserName: newUserName,
+          };
 
-             console.log("onConfirmAssign param", param);
-            transferTask(param).then((res) => {
-              console.log(res);
-              if (res.success) {
-                var index = item.index;
-                that.refreshTaskList();
-                that.$Message.success("移交成功");
-                that.closeAssignMoal();
-              } else {
-                that.$Message.error("移交失败");
-              }
-            });
+          console.log("onConfirmAssign param", param);
+          transferTask(param).then((res) => {
+            console.log(res);
+            if (res.success) {
+              var index = item.index;
+              that.refreshTaskList();
+              that.$Message.success("移交成功");
+              that.closeAssignMoal();
+            } else {
+              that.$Message.error("移交失败");
+            }
+          });
         });
       }
 
@@ -750,18 +753,36 @@ export default {
       if (this.$refs.nextuserselector) this.$refs.nextuserselector.recovery();
     },
     onConfirmSubmit() {
-      if (!this.wantAssignNext) {
-        this.submitTask(null); // 未指定下一步执行人
-      } else {
-        var user = this.$refs.nextuserselector.getSelected();
-        console.log("user", user);
-        if (user.userId == "" || user.userId == null) {
-          this.$refs.nextuserselector.setTip("请选择用户");
-        } else {
-          this.submitTask(user); // 指定下一步执行人
-        }
-      }
+      this.executeAfterOperation();
     },
+
+    executeAfterOperation() {
+      let item = this.currTask;
+      var operationName = item.beforeOperation;
+      let params = {
+        className: item.bindEnClassName,
+        objs: [],
+      };
+
+      let that = this;
+      getExecute(operationName, params).then((res) => {
+        console.log("执行后处理操作", res);
+        if (res.data.success) {
+          if (!this.wantAssignNext) {
+            this.submitTask(null); // 未指定下一步执行人
+          } else {
+            var user = this.$refs.nextuserselector.getSelected();
+            console.log("user", user);
+            if (user.userId == "" || user.userId == null) {
+              this.$refs.nextuserselector.setTip("请选择用户");
+            } else {
+              this.submitTask(user); // 指定下一步执行人
+            }
+          }
+        }
+      });
+    },
+
     async submitTask(nextUser) {
       let that = this;
       let item = this.currTask;

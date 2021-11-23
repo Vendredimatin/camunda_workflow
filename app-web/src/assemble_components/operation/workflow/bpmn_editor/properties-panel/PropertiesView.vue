@@ -140,17 +140,15 @@
             </Option>
           </Select>
         </div>
-        <div class="margin1">
-          前处理操作：
-          <Select clearable filterable>
-            <Option></Option>
-          </Select>
+        <div class="margin1" >前处理操作：
+              <Select v-model="propertyObj.beforeOperation" @on-change="changeOperation($event, 'before')" clearable filterable>
+                  <Option v-for="item in operations" :value="item.authority" :key="item.authority">{{ item.authority }}</Option>
+              </Select>
         </div>
-        <div class="margin1">
-          后处理操作：
-          <Select clearable filterable>
-            <Option></Option>
-          </Select>
+                    <div class="margin1" >后处理操作：
+                        <Select  v-model="propertyObj.afterOperation" @on-change="changeOperation($event, 'after')" clearable filterable>
+                            <Option v-for="item in operations" :value="item.authority" :key="item.authority">{{ item.authority }}</Option>
+                        </Select>
         </div>
 
         <Button
@@ -276,7 +274,7 @@
 <script>
 import OrgUserSelector from "../../sub_components/orgUserSelector";
 import { START_EVENT } from "bpmn-js/lib/features/replace/ReplaceOptions.js";
-import { getAllEntities, getViews } from "@/api/others.js";
+import { getAllEntities, getViews, getEntitiesOperations } from "@/api/others.js";
 export default {
   name: "PropertiesView",
   props: {
@@ -296,6 +294,7 @@ export default {
       entities: null,
       forms: null,
       selectViews: null,
+      operations: null,
       candidateUsersType: "candidateUsers",
       candidateGroupsType: "candidateGroups",
       scriptFormatType :"scriptFormat",
@@ -397,6 +396,7 @@ export default {
       this.modeling = this.modeler.get("modeling");
       this.moddle = this.modeler.get("moddle");
       this.getEntities();
+      // this.loadOperations();
     },
 
     /**
@@ -502,7 +502,26 @@ export default {
           that.selectViews = res.data.data;
         }
       });
+
+      this.loadOperations();
     },
+
+    loadOperations(){
+      let that = this;
+      that.operations = [];
+      getEntitiesOperations(this.propertyObj.selectedClass).then(res=>{
+          if(res.data.success){
+            console.log(res.data);
+            let opr = res.data.data.queryOprConfigs;
+            for(var i=0; i< opr.length; i++){
+                var implementType = opr[i].implementType;
+                if( implementType == "serverScript" || implementType == "clientScript"){
+                    that.operations.push(opr[i]);
+                    }
+                }
+            }
+          })
+        },
 
     changeElementName(event) {
       let elementName = event.target.value;
@@ -547,6 +566,15 @@ export default {
       });
 
     },    
+
+    changeOperation(operation, operationType){
+        let that = this;
+        if(operationType=="before"){
+          this.updateCamundaProperty(this.propertyObj.id, "beforeOperation", operation);
+        }else if (operationType == "after"){
+           this.updateCamundaProperty(this.propertyObj.id, "afterOperation", operation);
+        } 
+    },
 
     changeProperty(event, type){
       console.log(event, type);
