@@ -1,7 +1,7 @@
 package edu.thss.platform.controller.wfprocess;
 
 import edu.thss.platform.controller.ResponseMsg;
-import edu.thss.platform.domain.wfprocess.NewWfProcessInstance;
+import edu.thss.platform.domain.wfprocess.WfProcessInstance;
 import edu.thss.platform.newService.Server;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -71,7 +71,7 @@ public class RuntimeWorkflowController {
 
     @ApiOperation(value = "基于模版发起流程（新建绑定类对象）")
     @PostMapping(path = "released-template/launch-byNewObj")
-    public ResponseMsg<NewWfProcessInstance> launchProcessByNewObj(@ApiParam(value = "请求示例：\n```\n " +
+    public ResponseMsg<WfProcessInstance> launchProcessByNewObj(@ApiParam(value = "请求示例：\n```\n " +
             "{\n" +
             "    \"templateId\":\"000000000002aj\",\n" +
             "    \"userId\":\"53B68E57C5D8D94F937A1F0354CAB473\",\n" +
@@ -80,11 +80,11 @@ public class RuntimeWorkflowController {
             "    \"paramValues\":\"paramValues\",\n" +
             "}\n```", required = true) @RequestBody Map<String, Object> params) {
         try {
-            String templateId = String.valueOf(params.get("templateId"));
+            String processDefinitionId = String.valueOf(params.get("processDefinitionId"));
             String bindEnClassName = (String) params.get("bindEnClassName");
             String enClassInstanceId = (String) params.get("enClassInstanceId");
 
-            NewWfProcessInstance instance = server.launch( templateId, bindEnClassName, enClassInstanceId);
+            WfProcessInstance instance = server.launch( processDefinitionId, bindEnClassName, enClassInstanceId);
             if (instance!=null) return new ResponseMsg<>(instance);
             else return new ResponseMsg<>(404);
         } catch (Exception e) { e.printStackTrace(); return new ResponseMsg(404,"发起失败"); }

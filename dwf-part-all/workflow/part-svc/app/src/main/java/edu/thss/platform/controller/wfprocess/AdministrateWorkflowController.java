@@ -2,8 +2,7 @@ package edu.thss.platform.controller.wfprocess;
 
 import com.alibaba.fastjson.JSONObject;
 import edu.thss.platform.controller.ResponseMsg;
-import edu.thss.platform.dao.wfprocess.ReleasedWfProcessTemplateDao;
-import edu.thss.platform.domain.wfprocess.ReleasedWfProcessTemplate;
+import edu.thss.platform.domain.wfprocess.WfProcessDefinition;
 import edu.thss.platform.exception.PlatformException;
 import edu.thss.platform.newService.Server;
 import io.swagger.annotations.Api;
@@ -23,8 +22,6 @@ import java.util.Map;
 @RequestMapping("/dwf/v1/workflow/administrate")
 public class AdministrateWorkflowController {
 
-	@Autowired
-	ReleasedWfProcessTemplateDao releasedWfProcessTemplateDao;
 
 	@Autowired
 	Server server;
@@ -67,11 +64,11 @@ public class AdministrateWorkflowController {
 	
 	// API: service13/getRlProcessesList 获取所有已发布的流程模版
 	@ApiOperation(value = "获取所有已发布的流程模版")
-	@GetMapping(path = "all-released-process-templates")
-	public ResponseMsg<List<ReleasedWfProcessTemplate>> getAllReleasedProcessTemplates() {
+	@GetMapping(path = "all-released-process-templates/{userId}")
+	public ResponseMsg<List<WfProcessDefinition>> getAllReleasedProcessTemplates(@ApiParam(value = "用户Id", required = true) @PathVariable String userId) {
 		try {
-			List<ReleasedWfProcessTemplate> releasedWfProcessTemplates = releasedWfProcessTemplateDao.findAll();
-			return new ResponseMsg<>(releasedWfProcessTemplates);
+			List<WfProcessDefinition> wfProcessDefinitions = server.getAllReleasedProcessTemplate(userId);
+			return new ResponseMsg<>(wfProcessDefinitions);
 		} catch (Exception e) {
 			return new ResponseMsg(404);
 		}

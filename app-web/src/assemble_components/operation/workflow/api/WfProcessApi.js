@@ -53,7 +53,7 @@ export const startupProcess = () => {
 // 获取所有已发布流程模版列表
 // 
 export const getRlTemplates = (userId) => {
-    return axios.get(`${baseObjOther}/workflow/administrate/all-released-process-templates`).then(res => res.data);
+    return axios.get(`${baseObjOther}/workflow/administrate/all-released-process-templates/${userId}`).then(res => res.data);
 };
 
 /* export const getRlTemplates = (userId) => {

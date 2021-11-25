@@ -56,12 +56,6 @@
                                             <span style="float:right;color:#ccc;">{{ key }}</span>
                                         </Option>
                                     </OptionGroup>
-                                    <!-- <OptionGroup label="关联类">
-                                        <Option v-for="(value, key) in allRelationName" :value="key" :key="key" :label="value" style="width:340px">
-                                            <span>{{ value }}</span>
-                                            <span style="float:right;color:#ccc;">{{ key }}</span>
-                                        </Option>
-                                    </OptionGroup> -->
                                 </Select>
                         </FormItem>
                     </Form>
@@ -389,19 +383,9 @@ export default {
         },
         releaseProcess(){
             var that = this;
-            var template = {
-                version: that.releaseData.version,
-                description: that.releaseData.versionnote,
-                releaser:that.store.state.user.username,
-                releaserId: that.store.state.user.userId,
-                bindEnClassName : that.processList[that.currTemplate].bindEnClassName,
-                bpmnXml : that.processList[that.currTemplate].bpmnXml,
-                processName : that.processList[that.currTemplate].name,
-                lastUpdate : new Date().getTime()
-
-            };
-            console.log(template);
-            releaseTemplate(template).then(res => {
+            var processDefinitionId = that.processList[that.currTemplate].id;
+            console.log(processDefinitionId);
+            releaseTemplate(processDefinitionId).then(res => {
                 console.log("res",res);
                 if(res.success){
                     that.$Message.success("发布成功");
@@ -433,14 +417,15 @@ export default {
         },
         createProcess(){
             var that = this;
-            var template = {
+            var params = {
                 name: this.newProcessData.name,
                 author: this.store.state.user.username,
                 authorId: this.store.state.user.userId,
-                bindEnClassName: this.newProcessData.bindEnClassName,
+                className: this.newProcessData.bindEnClassName,
+                lastUpdate : new Date().getTime(),
             }
-            console.log("template",template);
-            createTemplate(template).then(res =>{
+            console.log("template",params);
+            createTemplate(params).then(res =>{
                 console.log("res",res);
                 if(res.success){
                     that.$Message.success("新建成功");

@@ -488,7 +488,7 @@ export default {
     releaseProcess() {
       var that = this;
 
-      let releasedTemplate = new WfProcessTemplate()
+     /*  let releasedTemplate = new WfProcessTemplate()
       releasedTemplate.code = this.propertyWfprocess.code;
       releasedTemplate.name = this.propertyWfprocess.name;
       releasedTemplate.authorId = this.propertyWfprocess.authorId;
@@ -498,12 +498,11 @@ export default {
       releasedTemplate.description = that.releaseData.versionnote;
       releasedTemplate.releaser = that.store.state.user.username;
       releasedTemplate.releaserId = that.store.state.user.userId;
-      releasedTemplate.lastUpdate = new Date().getTime();
+      releasedTemplate.lastUpdate = new Date().getTime(); */
 
-      this.bpmnModeler.saveXML({ format: true }, (err, xml) => {
-        if (xml) {
-          this.propertyWfprocess.bpmnXml = xml;
-          releaseTemplate(this.propertyWfprocess).then((res) => {
+       var processDefinitionId = that.propertyWfprocess.id;
+            console.log(processDefinitionId);
+            releaseTemplate(processDefinitionId).then(res => {
             console.log("res", res);
             if (res.success) {
               that.$Message.success("发布成功");
@@ -512,16 +511,12 @@ export default {
               that.$Message.error("发布失败，该版本已存在");
             }
           });
-        }
-      });
     },
 
 
     saveTemplate() {
       let that = this;
 
-      this.propertyWfprocess.releaser = that.store.state.user.username;
-      this.propertyWfprocess.releaserId = that.store.state.user.userId;
       this.propertyWfprocess.lastUpdate = new Date().getTime();
 
       console.log("save", this.propertyWfprocess);
@@ -531,7 +526,6 @@ export default {
           this.propertyWfprocess.bpmnXml = xml;
           saveTemplate(this.propertyWfprocess).then((res) => {
             if (res.success) {
-              //map[that.propertyWfprocess.id].stack.save();
               that.$Message.success("保存成功");
             } else {
               that.$Message.error("保存失败");

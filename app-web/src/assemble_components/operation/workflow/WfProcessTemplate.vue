@@ -279,15 +279,11 @@ export default {
 
         launchProcess(){
             var that = this;
-            var templateId= that.processList[that.currTemplate].id;
-            var userId = that.store.state.user.userId;
-            var userDisplayName = that.userDisplayName;
         
            const config = {headers: {'Authorization': this.store.state.user.token}};
            let param = {
-                templateId:that.processList[that.currTemplate].id,
-                userId: that.store.state.user.userId,
-                userDisplayName: that.userDisplayName,
+                processDefinitionId:processDefinitionId,
+                userId: userId,
                 bindEnClassName: that.processList[that.currTemplate].bindEnClassName,
             };
             launchProcessByNewObj(param,config).then(res=>{

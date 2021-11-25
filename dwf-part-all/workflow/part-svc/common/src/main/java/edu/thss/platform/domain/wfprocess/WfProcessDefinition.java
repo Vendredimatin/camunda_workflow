@@ -1,17 +1,21 @@
 package edu.thss.platform.domain.wfprocess;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "PLT_BT_WFPROCESSTEMPLATE")
+@Table(name = "PLT_BT_WFPROCESSDEFINITION")
 @Data
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
-public class NewWfProcessTemplate {
+@NoArgsConstructor
+public class WfProcessDefinition {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -33,9 +37,26 @@ public class NewWfProcessTemplate {
     @Column(name = "Lastupdate", columnDefinition = "timestamp")
     private Timestamp lastUpdate;
 
-    @Column(name = "BindEnClassName", columnDefinition = "varchar(32)")
-    private String bindEnClassName;
+    @Column(name = "ClassName", columnDefinition = "varchar(32)")
+    private String className;
+
+    private Boolean isDeploy = false;
+
+    private String processDeploymentId;
+
+    @Column(name = "releaseDate", columnDefinition = "timestamp")
+    private Timestamp releaseDate;
 
     @Column(name = "BpmnXml", columnDefinition = "text")
     private String bpmnXml;
+
+    public WfProcessDefinition(String name, String keywords, String author, String authorId, Timestamp lastUpdate,String className, String bpmnXml) {
+        this.name = name;
+        this.keywords = keywords;
+        this.author = author;
+        this.authorId = authorId;
+        this.lastUpdate = lastUpdate;
+        this.className = className;
+        this.bpmnXml = bpmnXml;
+    }
 }

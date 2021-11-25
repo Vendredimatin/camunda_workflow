@@ -1,3 +1,4 @@
+/*
 package edu.thss.platform.domain.wfprocess;
 
 import lombok.Data;
@@ -55,3 +56,4 @@ public class ReleasedWfProcessTemplate {
     @Column(name = "DeploymentId")
     private String deploymentId;
 }
+*/

@@ -37,8 +37,8 @@ export const deleteRlTemplate = (templateId) => {
 };
 
 // 发布一个流程流程模版
-export const releaseTemplate = (rltemplate) => {
-  return axios.post(`${baseObjOther}/workflow/buildtime/release-process-template`,rltemplate).then( res => res.data);
+export const releaseTemplate = (processDefinitionId) => {
+  return axios.post(`${baseObjOther}/workflow/buildtime/release-process-template/${processDefinitionId}`).then( res => res.data);
 };
 
 // 

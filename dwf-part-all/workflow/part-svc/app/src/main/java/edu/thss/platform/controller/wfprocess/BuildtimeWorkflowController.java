@@ -1,20 +1,18 @@
 package edu.thss.platform.controller.wfprocess;
 
 import edu.thss.platform.controller.ResponseMsg;
-import edu.thss.platform.dao.wfprocess.NewWfProcessTemplateDao;
-import edu.thss.platform.dao.wfprocess.ReleasedWfProcessTemplateDao;
-import edu.thss.platform.domain.wfprocess.NewWfProcessInstance;
-import edu.thss.platform.domain.wfprocess.NewWfProcessTemplate;
-import edu.thss.platform.domain.wfprocess.ReleasedWfProcessTemplate;
+import edu.thss.platform.dao.wfprocess.WfProcessDefinitionDao;
+import edu.thss.platform.domain.wfprocess.WfProcessDefinition;
 import edu.thss.platform.exception.PlatformException;
 import edu.thss.platform.newService.Server;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import edu.thss.platform.utils.EnvironmentBuilder;
@@ -27,9 +25,7 @@ public class BuildtimeWorkflowController {
     @Autowired
     EnvironmentBuilder environmentBuilder;
     @Autowired
-    ReleasedWfProcessTemplateDao releasedWfProcessTemplateDao;
-    @Autowired
-    NewWfProcessTemplateDao newWfProcessTemplateDao;
+    WfProcessDefinitionDao wfProcessDefinitionDao;
     @Autowired
     Server server;
 
@@ -47,28 +43,12 @@ public class BuildtimeWorkflowController {
         }
     }*/
 
-    /*@ApiOperation(value = "新建流程模版")
-    @PostMapping(path = "create-process-template")
-    public ResponseMsg<String> createProcessTemplate(@RequestBody WfProcessTemplate wfProcessTemplate) {
-        if (!SaaSServer.getInstance().hasClassByName(wfProcessTemplate.getBindEnClassName()))
-            throw new PlatformException("类" + wfProcessTemplate.getBindEnClassName() + "不存在");
-        try {
-            BuildtimeWfProcessBlo buildtimeWfProcessBlo = new BuildtimeWfProcessBlo();
-            WfProcess t = buildtimeWfProcessBlo.createProcessTemplates(wfProcessTemplate);
-            if (t != null) return new ResponseMsg<>(t.getId());
-            else return new ResponseMsg(500, "新建失败，该名称已存在");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseMsg(500, "新建失败");
-        }
-    }*/
-
     @ApiOperation(value = "新建流程模版")
     @PostMapping(path = "create-process-template")
-    public ResponseMsg<Long> createProcessTemplate(@RequestBody NewWfProcessTemplate wfProcessTemplate) {
-       NewWfProcessTemplate newWfProcessTemplate = newWfProcessTemplateDao.save(wfProcessTemplate);
+    public ResponseMsg<Long> createProcessTemplate(@RequestBody WfProcessDefinition wfProcessDefinition) {
+       WfProcessDefinition newWfProcessDefinition = server.createProcessDefinition(wfProcessDefinition);
 
-       if (newWfProcessTemplate != null) return new ResponseMsg<>(newWfProcessTemplate.getId());
+       if (newWfProcessDefinition != null) return new ResponseMsg<>(newWfProcessDefinition.getId());
        else return new ResponseMsg(500, "新建失败，该名称已存在");
     }
 
@@ -83,19 +63,19 @@ public class BuildtimeWorkflowController {
         return new ResponseMsg<>(buildtimeWfProcessBlo.getProcessTemplates(userId));
     }*/
 
-    @ApiOperation(value = "获取用户未发布的流程模版列表")
+    @ApiOperation(value = "获取用户的流程模版列表")
     @GetMapping(path = "process-templates/{userId}")
-    public ResponseMsg<List<NewWfProcessTemplate>> getProcessTemplates(@ApiParam(value = "用户Id", required = true) @PathVariable String userId) throws Exception {
+    public ResponseMsg<List<WfProcessDefinition>> getProcessTemplates(@ApiParam(value = "用户Id", required = true) @PathVariable String userId) throws Exception {
         // 获得我的流程列表
-        List<NewWfProcessTemplate> newWfProcessTemplates = newWfProcessTemplateDao.findAll();
+        List<WfProcessDefinition> newWfProcessTemplates = wfProcessDefinitionDao.findAllByAuthorId(userId);
         return new ResponseMsg<>(newWfProcessTemplates);
     }
 
     @ApiOperation(value = "根据模板Id获取用户未发布的流程模版")
     @GetMapping(path = "get-template/{templateId}")
-    public ResponseMsg<NewWfProcessTemplate> getTemplateById(@ApiParam(value = "模板Id", required = true) @PathVariable String templateId) throws Exception {
+    public ResponseMsg<WfProcessDefinition> getTemplateById(@ApiParam(value = "模板Id", required = true) @PathVariable String templateId) throws Exception {
         // 获得我的流程列表
-        NewWfProcessTemplate newWfProcessTemplate = newWfProcessTemplateDao.getOne(Long.parseLong(templateId));
+        WfProcessDefinition newWfProcessTemplate = wfProcessDefinitionDao.getOne(Long.parseLong(templateId));
         return new ResponseMsg<>(newWfProcessTemplate);
     }
 
@@ -121,21 +101,17 @@ public class BuildtimeWorkflowController {
         }
     }*/
 
-    @ApiOperation(value = "发布一个流程流程模版")
-    @PostMapping(path = "release-process-template")
-    public ResponseMsg<Long> releaseWfProcessTemplate(@RequestBody ReleasedWfProcessTemplate template) {
+    @ApiOperation(value = "发布一个流程流程")
+    @PostMapping(path = "release-process-template/{processDefinitionId}")
+    public ResponseMsg<String> releaseWfProcessTemplate(@ApiParam(value = "流程定义Id", required = true) @PathVariable String processDefinitionId) {
         try {
-            ReleasedWfProcessTemplate t = releasedWfProcessTemplateDao.save(template);
-            String deploymentId = server.deploy(t);
-            if(!deploymentId.equals("Error")){
-                t.setDeploymentId(deploymentId);
-                t = releasedWfProcessTemplateDao.save(t);
-            }else{
+            String deploymentId = server.deploy(processDefinitionId);
+            if(deploymentId.equals("Error")){
                 return new ResponseMsg(500, "发布失败，引擎部署失败");
             }
 
-            if (t == null) return new ResponseMsg(500, "发布失败，该版本已存在");
-            return new ResponseMsg<>(t.getId());
+            if (deploymentId == null) return new ResponseMsg(500, "发布失败，该版本已存在");
+            return new ResponseMsg<>(deploymentId);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseMsg(500, "发布失败");
@@ -147,7 +123,7 @@ public class BuildtimeWorkflowController {
     @PostMapping(path = "delete-process-template/{templateId}")
     public ResponseMsg deleteWfProcessTemplate(@ApiParam(value = "流程模版Id", required = true) @PathVariable String templateId) {
         try {
-            newWfProcessTemplateDao.deleteById(Long.valueOf(templateId));
+            wfProcessDefinitionDao.deleteById(Long.valueOf(templateId));
             return new ResponseMsg();
         } catch (Exception e) {
             e.printStackTrace();
@@ -178,9 +154,9 @@ public class BuildtimeWorkflowController {
 
     @ApiOperation(value = "保存一个流程模版")
     @PostMapping(path = "save-process-template")
-    public ResponseMsg<String> saveWfProcess(@RequestBody NewWfProcessTemplate wfProcessTemplate) {
-        System.out.println(wfProcessTemplate);
-        NewWfProcessTemplate newWfProcessTemplate = newWfProcessTemplateDao.save(wfProcessTemplate);
+    public ResponseMsg<String> saveWfProcess(@RequestBody WfProcessDefinition wfProcessDefinition) {
+        System.out.println(wfProcessDefinition);
+        WfProcessDefinition newWfProcessTemplate = wfProcessDefinitionDao.save(wfProcessDefinition);
         if (newWfProcessTemplate != null){
             return new ResponseMsg<>("success");
         }else
@@ -218,11 +194,11 @@ public class BuildtimeWorkflowController {
 
     // API: service13/getRlProcessesList 获取所有已发布的流程模版
     @ApiOperation(value = "获取所有已发布的流程模版")
-    @PostMapping(path = "all-released-process-templates")
-    public ResponseMsg<List<ReleasedWfProcessTemplate>> getAllReleasedProcessTemplates() {
+    @PostMapping(path = "all-released-process-templates/{userId}")
+    public ResponseMsg<List<WfProcessDefinition>> getAllReleasedProcessTemplates(@ApiParam(value = "用户Id", required = true) @PathVariable String userId) {
         try {
-            List<ReleasedWfProcessTemplate> releasedWfProcessTemplates = releasedWfProcessTemplateDao.findAll();
-            return new ResponseMsg<>(releasedWfProcessTemplates);
+            List<WfProcessDefinition> wfProcessDefinitions = server.getAllReleasedProcessTemplate(userId);
+            return new ResponseMsg<>(wfProcessDefinitions);
         } catch (Exception e) {
             return new ResponseMsg(404);
         }
