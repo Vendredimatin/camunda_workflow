@@ -40,6 +40,8 @@ public class WfProcessDefinition {
     @Column(name = "ClassName", columnDefinition = "varchar(32)")
     private String className;
 
+    private String classDisplayName;
+
     private Boolean isDeploy = false;
 
     private String processDeploymentId;
@@ -50,13 +52,14 @@ public class WfProcessDefinition {
     @Column(name = "BpmnXml", columnDefinition = "text")
     private String bpmnXml;
 
-    public WfProcessDefinition(String name, String keywords, String author, String authorId, Timestamp lastUpdate,String className, String bpmnXml) {
+    public WfProcessDefinition(String name, String keywords, String author, String authorId, Timestamp lastUpdate,String className,String classDisplayName, String bpmnXml) {
         this.name = name;
         this.keywords = keywords;
         this.author = author;
         this.authorId = authorId;
         this.lastUpdate = lastUpdate;
         this.className = className;
+        this.classDisplayName = classDisplayName;
         this.bpmnXml = bpmnXml;
     }
 }

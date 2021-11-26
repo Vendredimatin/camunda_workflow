@@ -243,6 +243,7 @@ export default {
                     this.allRelationName[x.className] = x.displayName;
                 })
             })
+            console.log("async init()",this.allEnClassName);
             this.loadProcessList();
         },
         loadProcessList(){
@@ -254,7 +255,7 @@ export default {
                 that.allProcessList = res.data;
                 that.allProcessList.sort((a,b) => b.lastUpdate - a.lastUpdate);
                 that.allProcessList.forEach(pro=>{
-                    pro.bindEnClassDisplayName = pro.bindEnClassName +'（'+this.allEnClassName[pro.bindEnClassName];+'）';
+                    pro.bindEnClassDisplayName = pro.className +'（'+this.allEnClassName[pro.className];+'）';
                 });
                 that.processList = that.allProcessList.concat();
                 that.handleSearch();
@@ -422,6 +423,7 @@ export default {
                 author: this.store.state.user.username,
                 authorId: this.store.state.user.userId,
                 className: this.newProcessData.bindEnClassName,
+                classDisplayName: this.allEnClassName[this.newProcessData.bindEnClassName],
                 lastUpdate : new Date().getTime(),
             }
             console.log("template",params);
