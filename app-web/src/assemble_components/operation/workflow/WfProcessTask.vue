@@ -267,20 +267,20 @@ export default {
           title: "活动名",
           key: "name",
         },
-        {
-          title: "所在流程",
-          key: "wfProcessInstanceName",
-          render: (h, params) => {
-            return h(
-              "div",
-              params.row.wfProcessInstanceName +
-                "（" +
-                params.row.wfProcessVerison +
-                "）"
-            );
-          },
-          sortable: true,
-        },
+        // {
+        //   title: "所在流程",
+        //   key: "wfProcessInstanceName",
+        //   render: (h, params) => {
+        //     return h(
+        //       "div",
+        //       params.row.wfProcessInstanceName +
+        //         "（" +
+        //         params.row.wfProcessVerison +
+        //         "）"
+        //     );
+        //   },
+        //   sortable: true,
+        // },
         {
           title: "绑定实体类",
           key: "bindEnClassName",
@@ -555,9 +555,34 @@ export default {
     // 在流程中打开
     async openTaskForm() {
       //先执行前处理操作
+      let that = this;
+      let item = this.currTask;
+      var operationName = item.beforeOperation;
+      if(operationName != undefined){
+        this.executeBeforeOperation();
+      }else{
+        var wfauthority = "submission";
+          // 待提交
+
+          that.root.openTab({
+            targetClass: item.bindEnClassName,
+            authority: item.formName + "_" + item.id,
+            conditionExpre: `and obj.oid='${item.enClassInstanceId}'`,
+            displayName: item.name,
+            viewName: item.formName,
+            action: "wfprocess",
+            params: "",
+            wfProcessInstanceId: item.wfProcessInstanceId,
+            taskId: item.id,
+            wfAuthority: wfauthority,
+          });
+      }
+      
+    },
+
+    executeBeforeOperation(){
       let item = this.currTask;
 
-      var operationName = item.beforeOperation;
       let params = {
         className: item.bindEnClassName,
         objs: [],
@@ -585,6 +610,7 @@ export default {
         }
       });
     },
+
     // 查看：在表单中打开但是不能编辑 priview
     // checkTask(){
     //     let item = this.currTask;
@@ -753,7 +779,23 @@ export default {
       if (this.$refs.nextuserselector) this.$refs.nextuserselector.recovery();
     },
     onConfirmSubmit() {
-      this.executeAfterOperation();
+      let item = this.currTask;
+      var operationName = item.beforeOperation;
+      if(operationName != undefined){
+        this.executeAfterOperation();
+      }else{
+        if (!this.wantAssignNext) {
+            this.submitTask(null); // 未指定下一步执行人
+          } else {
+            var user = this.$refs.nextuserselector.getSelected();
+            console.log("user", user);
+            if (user.userId == "" || user.userId == null) {
+              this.$refs.nextuserselector.setTip("请选择用户");
+            } else {
+              this.submitTask(user); // 指定下一步执行人
+            }
+          }
+      }
     },
 
     executeAfterOperation() {

@@ -81,7 +81,7 @@ public class RuntimeWorkflowController {
             "}\n```", required = true) @RequestBody Map<String, Object> params) {
         try {
             String processDefinitionId = String.valueOf(params.get("processDefinitionId"));
-            String bindEnClassName = (String) params.get("bindEnClassName");
+            String bindEnClassName = (String) params.get("className");
             String enClassInstanceId = (String) params.get("enClassInstanceId");
 
             WfProcessInstance instance = server.launch( processDefinitionId, bindEnClassName, enClassInstanceId);

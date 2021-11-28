@@ -47,9 +47,9 @@
                          <FormItem prop="name">
                             流程名称：&nbsp;&nbsp;&nbsp;&nbsp;<Input type="text" v-model="newProcessData.name" placeholder="请输入流程名" style="width:70%"></Input>
                         </FormItem>
-                        <FormItem prop="bindEnClassName">
+                        <FormItem prop="className">
                             绑定实体类：
-                                <Select ref="createFormClassSelect" v-model="newProcessData.bindEnClassName" filterable style="width:340px;">
+                                <Select ref="createFormClassSelect" v-model="newProcessData.className" filterable style="width:340px;">
                                     <OptionGroup label="实体类">
                                         <Option v-for="(value, key) in allEnClassName" :value="key" :key="key" :label="value" style="width:340px">
                                             <span>{{ value }}</span>
@@ -91,8 +91,8 @@
                     <Card  class="self-card" :class="{ active:currTemplate==index}" :id="'template_'+index" :bordered="false" style="width:250px;display:inline-block;margin:8px;">
                         <p slot="title" :title="pro.name">{{pro.name}}</p>
                         <div>创建人：{{pro.author}}</div>
-                        <div :title="allEnClassName[pro.bindEnClassName]+'（'+pro.bindEnClassName+'）'" class="bind-class-name">
-                            绑定类：{{showBindClassName(pro.bindEnClassName)}}
+                        <div :title="allEnClassName[pro.className]+'（'+pro.className+'）'" class="bind-class-name">
+                            绑定类：{{showBindClassName(pro.className)}}
                         </div>
                         <div >更新时间：{{ new Date(pro.lastUpdate).format("yyyy-MM-dd hh:mm:ss") }}</div>
                     </Card>
@@ -143,7 +143,7 @@ export default {
             
             newProcessData:{
                 name:"",
-                bindEnClassName:"",
+                className:"",
             },
             releaseModal: false,
             releaseData:{
@@ -179,7 +179,7 @@ export default {
                         trigger: "blur"
                     },
                 ],
-                bindEnClassName: [
+                className: [
                     { required: true, message: "绑定实体类不能为空", trigger: "blur" }
                 ],
             },
@@ -263,19 +263,19 @@ export default {
         },
       
 
-        showBindClassName(bindEnClassName){
-            var bindEnClassName = bindEnClassName;
-            var displayName = this.allEnClassName[bindEnClassName];
+        showBindClassName(className){
+            var className = className;
+            var displayName = this.allEnClassName[className];
             if(displayName==null){displayName="null";}
             if( displayName.length>5) {
                 displayName = displayName.slice(0,4)+"..";
-                bindEnClassName = bindEnClassName.slice(0,5);
+                className = className.slice(0,5);
             }
-            var l = displayName.length + bindEnClassName.length;
+            var l = displayName.length + className.length;
             if( l > 9) {
-                bindEnClassName = bindEnClassName.slice(0,l-6)+"..";
+                className = className.slice(0,l-6)+"..";
             }
-            return displayName+'（'+bindEnClassName+'）';
+            return displayName+'（'+className+'）';
         },
         handleSearch(){
             this.currentPage = 1;
@@ -422,8 +422,8 @@ export default {
                 name: this.newProcessData.name,
                 author: this.store.state.user.username,
                 authorId: this.store.state.user.userId,
-                className: this.newProcessData.bindEnClassName,
-                classDisplayName: this.allEnClassName[this.newProcessData.bindEnClassName],
+                className: this.newProcessData.className,
+                classDisplayName: this.allEnClassName[this.newProcessData.className],
                 lastUpdate : new Date().getTime(),
             }
             console.log("template",params);

@@ -9,4 +9,6 @@ public interface WfProcessDefinitionDao extends JpaRepository<WfProcessDefinitio
     List<WfProcessDefinition> findAllByAuthorId(String authorId);
 
     List<WfProcessDefinition> findAllByAuthorIdAndIsDeploy(String authorId, boolean isDeploy);
+
+    List<WfProcessDefinition> findAllByIsDeploy(boolean isDeploy);
 }

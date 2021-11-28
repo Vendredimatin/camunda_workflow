@@ -34,3 +34,4 @@ spring.datasource:
 spring.web.resources:
   static-locations: NULL
 
+

@@ -33,9 +33,9 @@
                 <span v-for="(temp,index) in processList" :key="index" @click="clickTempate(index)" >
                     <Card class="self-card" :class="{ active:currTemplate==index}" :id="'template_'+index" @click="clickTempate(index)" :bordered="false" style="width:280px;display:inline-block;margin:8px;">
                         <p slot="title" :title="temp.name+'（'+temp.version+'）'">{{temp.name}}（{{temp.version}}）</p>
-                        <div>发布人：{{temp.releaser}}</div>
-                        <div :title="allEnClassName[temp.bindEnClassName]+'（'+temp.bindEnClassName+'）'" class="bind-class-name">绑定实体类：{{showbindClassName(temp.bindEnClassName)}}</div>
-                        <div >更新时间：{{ new Date(temp.lastupdate).format("yyyy-MM-dd hh:mm:ss") }}</div>
+                        <div>发布人：{{temp.author}}</div>
+                        <div :title="allEnClassName[temp.className]+'（'+temp.className+'）'" class="bind-class-name">绑定实体类：{{showbindClassName(temp.className)}}</div>
+                        <div >更新时间：{{ new Date(temp.lastUpdate).format("yyyy-MM-dd hh:mm:ss") }}</div>
                         <Button @click="checkProInfo(index)" style="margin-top:5px;" class="self-btn">查看详情</Button>
                     </Card>
                 </span>
@@ -62,8 +62,8 @@
                 <p>id：{{currPro.id}}</p>
                 <p>创建人：{{currPro.author}}</p>
                 <p>发布人：{{currPro.releaser}}</p>
-                <p>绑定实体类：{{allEnClassName[currPro.bindEnClassName]+'（'+currPro.bindEnClassName+'）'}}</p>
-                <p>更新时间：{{ new Date(currPro.lastupdate).format("yyyy-MM-dd hh:mm:ss") }}</p>
+                <p>绑定实体类：{{allEnClassName[currPro.className]+'（'+currPro.className+'）'}}</p>
+                <p>更新时间：{{ new Date(currPro.lastUpdate).format("yyyy-MM-dd hh:mm:ss") }}</p>
                 <p>关键字：{{currPro.keywords}}</p>
                 <p>简介：</p>
                 <Input type="textarea" readonly v-model="currPro.description"></Input>
@@ -186,28 +186,28 @@ export default {
             var paged = unpagedProcessList.slice((this.currentPage-1)*this.pageSize,(this.currentPage-1)*this.pageSize+this.pageSize);
             return paged;
         },
-        showbindClassName(bindEnClassName){
-            var bindEnClassName = bindEnClassName;
-            var displayName = this.allEnClassName[bindEnClassName];
+        showbindClassName(className){
+            var className = className;
+            var displayName = this.allEnClassName[className];
             if(displayName==null){displayName="null";}
             if( displayName.length>5) {
                 displayName = displayName.slice(0,4)+"..";
-                bindEnClassName = bindEnClassName.slice(0,5);
+                className = className.slice(0,5);
             }
-            var l = displayName.length + bindEnClassName.length;
+            var l = displayName.length + className.length;
             if( l > 9) {
-                bindEnClassName = bindEnClassName.slice(0,l-6)+"..";
+                className = className.slice(0,l-6)+"..";
             }
-            return displayName+'（'+bindEnClassName+'）';
+            return displayName+'（'+className+'）';
         },
 
         sortByTime(){
             if(this.sortOrder ==0 ){
                 this.sortOrder = 1;
-                this.processList.sort((a,b) => a.lastupdate - b.lastupdate);
+                this.processList.sort((a,b) => a.lastUpdate - b.lastUpdate);
             }else{
                 this.sortOrder = 0;
-                this.processList.sort((a,b) => b.lastupdate - a.lastupdate);
+                this.processList.sort((a,b) => b.lastUpdate - a.lastUpdate);
             }
            
         },
@@ -231,8 +231,8 @@ export default {
         checkProcess(){
             var proId = this.processList[this.currTemplate].id;
             var proName = this.processList[this.currTemplate].name;
-            var bindEnClassName = this.processList[this.currTemplate].bindEnClassName;
-            this.root.goToWfAdminEdit(proId, proName, bindEnClassName);
+            var className = this.processList[this.currTemplate].className;
+            this.root.goToWfAdminEdit(proId, proName, className);
         },
         clickTempate(index){
 
@@ -258,7 +258,7 @@ export default {
                     if(re.formName!=null && re.formName!=""){
                        // 绑定了初始表单，先打开初始表单
                         that.root.openTab({
-                            targetClass: item.bindEnClassName,
+                            targetClass: item.className,
                             authority: "launch_" + "_" + item.id,
                             conditionExpre: `and obj.oid=""`,
                             displayName: item.name,
@@ -279,12 +279,12 @@ export default {
 
         launchProcess(){
             var that = this;
-        
+
            const config = {headers: {'Authorization': this.store.state.user.token}};
            let param = {
-                processDefinitionId:processDefinitionId,
-                userId: userId,
-                bindEnClassName: that.processList[that.currTemplate].bindEnClassName,
+                processDefinitionId:that.processList[that.currTemplate].id,
+                userId: this.store.state.user.userId,
+                className: that.processList[that.currTemplate].className,
             };
             launchProcessByNewObj(param,config).then(res=>{
                    if(res.success == 1){

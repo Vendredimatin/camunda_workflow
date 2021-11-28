@@ -160,7 +160,7 @@ public class AdministrateWorkflowController {
 	}*/
 
 
-	/*@ApiOperation(value = "获取用户的任务列表个数")
+	@ApiOperation(value = "获取用户的任务列表个数")
 	@PostMapping(path = "task-instances-count")
 	public ResponseMsg<Integer> getManualTaskInstancesCount(@ApiParam(value = "请求示例：\n```\n " +
 			"{\n" +
@@ -171,7 +171,6 @@ public class AdministrateWorkflowController {
 		try {
 			String userId = (String) params.get("userId");
 			String userName = (String) params.get("userName");
-			if (!SaaSServer.getInstance().hasUserByOid(userId)) throw new PlatformException(String.format("不存在oid为%s的用户", userId));
 			String filerStatus = (String) params.get("filerStatus");
 			String condition = (String) params.get("condition");
 			List<String> groups = (List<String>) params.get("groups");
@@ -180,7 +179,7 @@ public class AdministrateWorkflowController {
 			Integer len  = server.getTaskCount(userName,filerStatus, condition, groups);
 			return new ResponseMsg(len);
 		} catch (Exception e) { e.printStackTrace(); return new ResponseMsg<>(404); }
-	}*/
+	}
 
 
 

@@ -48,6 +48,7 @@ public class Server {
             processDefinition.setProcessDeploymentId(deploymentId);
             processDefinition.setIsDeploy(true);
             processDefinition.setReleaseDate(new Timestamp(System.currentTimeMillis()));
+            processDefinitionDao.save(processDefinition);
             return deploymentId;
         }
 
@@ -73,12 +74,16 @@ public class Server {
         }
 
         //下面还要写发起流程的情况
-        String processInstanceId = engineContext.launch(instance.getProcessDeploymentId());
+        String processInstanceId = engineContext.launch(processDefinition.getProcessDeploymentId());
         instance.setProcessInstanceId(processInstanceId);
         instance.setTaskInstanceId("-1");
         instance.setLaunchTime(System.currentTimeMillis());
         instance.setProcessDeploymentId(processDefinition.getProcessDeploymentId());
         instance.setProcessDefinitionId(String.valueOf(processDefinition.getId()));
+
+        wfProcessToObject.setProcessInstanceId(processInstanceId);
+        wfProcessToObject.setTaskInstanceId("-1");
+        processToObjectDao.save(wfProcessToObject);
 
         processInstanceDao.save(instance);
 
@@ -134,6 +139,6 @@ public class Server {
     }
 
     public List<WfProcessDefinition> getAllReleasedProcessTemplate(String userId) {
-        return processDefinitionDao.findAllByAuthorIdAndIsDeploy(userId, true);
+        return processDefinitionDao.findAllByIsDeploy(true);
     }
 }
