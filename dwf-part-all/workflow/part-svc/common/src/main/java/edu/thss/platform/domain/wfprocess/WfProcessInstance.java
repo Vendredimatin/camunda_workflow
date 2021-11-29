@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "PLT_BT_NEWWFPROCESSINSTANCE")
+@Table(name = "PLT_BT_WFPROCESSINSTANCE")
 @Data
 public class WfProcessInstance {
 

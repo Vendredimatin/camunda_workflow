@@ -26,8 +26,8 @@
       <Button class="button" @click="handleRedo">前进</Button>
       <Button class="button" @click="publish">发布</Button>
       <Button class="button" @click="saveTemplate">保存</Button>
-      <Button class="button" @click="setExecutable">设置可执行性</Button>
-
+<!--       <Button class="button" @click="setExecutable">设置可执行性</Button>
+ -->
     </div>
     <div
       id="js-canvas"
@@ -222,6 +222,7 @@ export default {
         this.bpmnModeler.on("element.changed", (e) => {
           const { element } = e;
           const { element: currentElement } = this;
+
           if (!currentElement) {
             return;
           }
@@ -472,7 +473,15 @@ export default {
         this.propertyObj = this.propertyObjs.get(this.element.id);
         this.choose = true;
         console.log(this.propertyObj)
-      } 
+      } else{
+        //选取的是整个流程
+        let that = this;
+        this.propertyObjs.forEach(function(value,key){
+　　　　　　if(value.type == "bpmn:Process"){
+              that.propertyObj = that.propertyObjs.get(key);
+           }
+　　　　 });
+      }
     },
     onConfirmRelease() {
       this.$refs["releaseForm"].validate((valid) => {
@@ -536,7 +545,7 @@ export default {
     },
 
     setExecutable() {
-              this.modeling = this.bpmnModeler.get('modeling')
+      this.modeling = this.bpmnModeler.get('modeling')
 
       const elementRegistry = this.bpmnModeler.get("elementRegistry"); 
       const process = elementRegistry.get("Process_1");

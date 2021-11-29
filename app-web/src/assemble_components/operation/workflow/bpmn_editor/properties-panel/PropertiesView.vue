@@ -6,233 +6,264 @@
     </div> -->
     <p>{{ propertyObj.id }}</p>
 
-    <div v-if="propertyObj == undefined">
-      <!-- <div v-if="!editable" class="margin1">
-          版本名：{{ propertyObj.version }}
-        </div>
-        <div v-if="!editable">当前状态：{{ propertyObj.statusTypy }}</div>
-        <div class="margin1">绑定实体类：{{ propertyObj.bindEnClassName }}</div>
-        <div class="margin1">创建人：{{ propertyObj.author }}</div>
-        <div v-if="!editable">流程状态：:{{propertyObj.status}}<div>
-        <div v-if="!editable">
-          <div class="margin1">
-            开始时间：{{
-              new Date(propertyObj.startTime).format("yyyy-MM-dd hh:mm:ss")
-            }}
-          </div>
-          <div class="margin1">
-            最后更新：{{
-              new Date(propertyObj.lastupdate).format("yyyy-MM-dd hh:mm:ss")
-            }}
-          </div>
-        </div>
-        <div v-else class="margin1">
-          最后更新：{{
-            new Date(propertyObj.lastupdate).format("yyyy-MM-dd hh:mm:ss")
-          }}
-        </div> -->
+    <div v-show="propertyObj.type == 'bpmn:Process'">
+      <div>
+        <p class="margin1">名称</p>
+        <Input
+          v-model="propertyObj.name"
+          placeholder="名称"
+          @on-change="changeElementName"
+        />
+      </div>
+      　　　　
+      <Checkbox @on-change="changeProperty($event, isExecuteType)"
+        >isExecutable</Checkbox
+      >
+      <div>
+        <p class="margin1">描述</p>
+        <Input
+          v-model="propertyObj.description"
+          placeholder="描述"
+          @on-change="changeDescirption"
+        />
+      </div>
     </div>
-    <div v-else>
-      <!-- <div v-if="isProcess">
-        
+    <!-- <div v-if="isProcess">
       </div> -->
-      <div v-show="propertyObj.type == 'bpmn:StartEvent'">
-        <div>
-          <label>id</label>
-          <span>{{ propertyObj.id }}</span>
-        </div>
-        <div>
-          <p class="margin1">名称</p>
-          <Input placeholder="名称" />
-        </div>
+    <div v-show="propertyObj.type == 'bpmn:StartEvent'">
+      <div>
+        <label>id</label>
+        <span>{{ propertyObj.id }}</span>
       </div>
-
-      <div v-show="propertyObj.type == 'bpmn:SequenceFlow'">
-        <div>
-          <label>id</label>
-          <span>{{ propertyObj.id }}</span>
-        </div>
-        <div>
-          <p class="margin1">名称</p>
-          <Input v-model="propertyObj.name" placeholder="名称" @on-change="changeElementName" />
-        </div>
-        <div>
-          <p class="margin1">表达式</p>
-          <Input v-model="propertyObj.expression" placeholder="Expression" @on-change="changeExpression" />
-        </div>
+      <div>
+        <p class="margin1">名称</p>
+        <Input placeholder="名称" />
       </div>
+    </div>
 
-      <div v-show="propertyObj.type == 'bpmn:BoundaryEvent'">
-        <div>
-          <label>id</label>
-          <span>{{ propertyObj.id }}</span>
-        </div>
-        <div>
-          <p class="margin1">定时器定义</p>
-          <Input placeholder="Expression" @on-change="changeTimerDefinition" />
-        </div>
+    <div v-show="propertyObj.type == 'bpmn:SequenceFlow'">
+      <div>
+        <label>id</label>
+        <span>{{ propertyObj.id }}</span>
       </div>
+      <div>
+        <p class="margin1">名称</p>
+        <Input
+          v-model="propertyObj.name"
+          placeholder="名称"
+          @on-change="changeElementName"
+        />
+      </div>
+      <div>
+        <p class="margin1">表达式</p>
+        <Input
+          v-model="propertyObj.expression"
+          placeholder="Expression"
+          @on-change="changeExpression"
+        />
+      </div>
+    </div>
 
-      <div v-show="propertyObj.type == 'bpmn:UserTask'">
-        <div>
-          <label>id</label>
-          <span>{{ propertyObj.id }}</span>
-        </div>
-        <!-- <div>当前状态：{{propertyObj.statusType}}</div>
+    <div v-show="propertyObj.type == 'bpmn:BoundaryEvent'">
+      <div>
+        <label>id</label>
+        <span>{{ propertyObj.id }}</span>
+      </div>
+      <div>
+        <p class="margin1">定时器定义</p>
+        <Input placeholder="Expression" @on-change="changeTimerDefinition" />
+      </div>
+    </div>
+
+    <div v-show="propertyObj.type == 'bpmn:UserTask'">
+      <div>
+        <label>id</label>
+        <span>{{ propertyObj.id }}</span>
+      </div>
+      <!-- <div>当前状态：{{propertyObj.statusType}}</div>
               <div v-show="propertyObj.status == 3">
                   <div>开始时间：{{new Date(propertyObj.startTime).format("yyyy-MM-dd hh:mm:ss")}}</div>
               </div> -->
-        <div>
-          <p class="margin1">名称</p>
-          <Input
-            v-model="propertyObj.name"
-            @on-change="changeElementName"
-            placeholder="名称"
-          />
-        </div>
-        <div>
-          <p class="margin1">目标类:</p>
-          <Select
-            v-model="propertyObj.selectedClass"
-            @on-change="changeSelectedClass"
-            clearable
-            filterable
-          >
-            <Option
-              v-for="entity in entities"
-              :value="entity.className"
-              :key="entity.className"
-              >{{ entity.className }}
-            </Option>
-          </Select>
-        </div>
-
-        <div>
-          <p class="margin1">分配人</p>
-          <Input :value="propertyObj.assignee" />
-        </div>
-
-        <div>
-          <p class="margin1">候选人</p>
-          <Input v-model="propertyObj.candidateUsers" @on-change="changeProperty($event,candidateUsersType)"/>
-        </div>
-        <div>
-          <p class="margin1">候选组</p>
-          <Input v-model="propertyObj.candidateGroups" @on-change="changeProperty($event,candidateGroupsType)"/>
-        </div>
-
-        <div class="margin1">
-          绑定表单：
-          <!--           <Input v-model="propertyObj.selectedView" @on-change="changeSelectedView"  placeholder="表单"/>
- -->
-          <Select
-            v-model="propertyObj.selectedView"
-            @on-change="changeSelectedView"
-
-            clearable
-            filterable
-          >
-            <Option
-              v-for="view in selectViews"
-              :value="view.viewName"
-              :key="view.viewName"
-              >{{ view.viewName }}
-            </Option>
-          </Select>
-        </div>
-        <div class="margin1" >前处理操作：
-              <Select v-model="propertyObj.beforeOperation" @on-change="changeOperation($event, 'before')" clearable filterable>
-                  <Option v-for="item in operations" :value="item.authority" :key="item.authority">{{ item.authority }}</Option>
-              </Select>
-        </div>
-                    <div class="margin1" >后处理操作：
-                        <Select  v-model="propertyObj.afterOperation" @on-change="changeOperation($event, 'after')" clearable filterable>
-                            <Option v-for="item in operations" :value="item.authority" :key="item.authority">{{ item.authority }}</Option>
-                        </Select>
-        </div>
-
-        <Button
-          class="self-btn"
-          @click="showProcessEditPanel"
-          v-if="haveAdvancedProperties"
-          >编辑高级属性</Button
+      <div>
+        <p class="margin1">名称</p>
+        <Input
+          v-model="propertyObj.name"
+          @on-change="changeElementName"
+          placeholder="名称"
+        />
+      </div>
+      <div>
+        <p class="margin1">目标类:</p>
+        <Select
+          v-model="propertyObj.selectedClass"
+          @on-change="changeSelectedClass"
+          clearable
+          filterable
         >
+          <Option
+            v-for="entity in entities"
+            :value="entity.className"
+            :key="entity.className"
+            >{{ entity.className }}
+          </Option>
+        </Select>
       </div>
 
-      <div v-show="propertyObj.type == 'bpmn:ScriptTask'">
-        <div>
-          <label>id</label>
-          <span>{{ propertyObj.id }}</span>
-        </div>
-        <!-- <div>当前状态：{{propertyObj.statusType}}</div>
+      <div>
+        <p class="margin1">分配人</p>
+        <Input :value="propertyObj.assignee" />
+      </div>
+
+      <div>
+        <p class="margin1">候选人</p>
+        <Input
+          v-model="propertyObj.candidateUsers"
+          @on-change="changeProperty($event, candidateUsersType)"
+        />
+      </div>
+      <div>
+        <p class="margin1">候选组</p>
+        <Input
+          v-model="propertyObj.candidateGroups"
+          @on-change="changeProperty($event, candidateGroupsType)"
+        />
+      </div>
+
+      <div class="margin1">
+        绑定表单：
+        <!--           <Input v-model="propertyObj.selectedView" @on-change="changeSelectedView"  placeholder="表单"/>
+ -->
+        <Select
+          v-model="propertyObj.selectedView"
+          @on-change="changeSelectedView"
+          clearable
+          filterable
+        >
+          <Option
+            v-for="view in selectViews"
+            :value="view.viewName"
+            :key="view.viewName"
+            >{{ view.viewName }}
+          </Option>
+        </Select>
+      </div>
+      <div class="margin1">
+        前处理操作：
+        <Select
+          v-model="propertyObj.beforeOperation"
+          @on-change="changeOperation($event, 'before')"
+          clearable
+          filterable
+        >
+          <Option
+            v-for="item in operations"
+            :value="item.authority"
+            :key="item.authority"
+            >{{ item.authority }}</Option
+          >
+        </Select>
+      </div>
+      <div class="margin1">
+        后处理操作：
+        <Select
+          v-model="propertyObj.afterOperation"
+          @on-change="changeOperation($event, 'after')"
+          clearable
+          filterable
+        >
+          <Option
+            v-for="item in operations"
+            :value="item.authority"
+            :key="item.authority"
+            >{{ item.authority }}</Option
+          >
+        </Select>
+      </div>
+
+      <Button
+        class="self-btn"
+        @click="showProcessEditPanel"
+        v-if="haveAdvancedProperties"
+        >编辑高级属性</Button
+      >
+    </div>
+
+    <div v-show="propertyObj.type == 'bpmn:ScriptTask'">
+      <div>
+        <label>id</label>
+        <span>{{ propertyObj.id }}</span>
+      </div>
+      <!-- <div>当前状态：{{propertyObj.statusType}}</div>
               <div v-show="propertyObj.status == 3">
                   <div>开始时间：{{new Date(propertyObj.startTime).format("yyyy-MM-dd hh:mm:ss")}}</div>
               </div> -->
-        <div>
-          <p class="margin1">名称</p>
-          <Input
-            v-model="propertyObj.name"
-            @on-change="changeElementName"
-            placeholder="名称"
-          />
-        </div>
-        <div>
-          <p class="margin1">Script format</p>
-          <Select
-            v-model="propertyObj.scriptFormat"
-            @on-change="changeProperty($event, scriptFormatType)"
-            clearable
-            filterable
-          >
-            <Option
-              v-for="item in scriptFormats"
-              :value="item.language"
-              :key="item.language"
-              >{{ item.language }}
-            </Option>
-          </Select>
-        </div>
-
-
-        <div>
-          <p class="margin1">Script</p>
-          <Input v-model="propertyObj.script" type="textarea"  @on-change="changeScript"/>
-        </div>
-
-        <div>
-          <p class="margin1">Result Variable</p>
-          <Input
-            v-model="propertyObj.resultVariable" 
-            @on-change="changeProperty($event, resultVariableType)"
-            placeholder="结果变量"
-          />
-        </div>
+      <div>
+        <p class="margin1">名称</p>
+        <Input
+          v-model="propertyObj.name"
+          @on-change="changeElementName"
+          placeholder="名称"
+        />
+      </div>
+      <div>
+        <p class="margin1">Script format</p>
+        <Select
+          v-model="propertyObj.scriptFormat"
+          @on-change="changeProperty($event, scriptFormatType)"
+          clearable
+          filterable
+        >
+          <Option
+            v-for="item in scriptFormats"
+            :value="item.language"
+            :key="item.language"
+            >{{ item.language }}
+          </Option>
+        </Select>
       </div>
 
-      <div v-show="propertyObj.type == 'bpmn:ExclusiveGateway'">
-        <div>
-          <label>id</label>
-          <span>{{ propertyObj.id }}</span>
-        </div>
-        <div>
-          <p class="margin1">名称</p>
-          <Input placeholder="名称" />
-        </div>
-        <div>
-          <p class="margin1">监听</p>
-          <Input placeholder="条件" />
-        </div>
+      <div>
+        <p class="margin1">Script</p>
+        <Input
+          v-model="propertyObj.script"
+          type="textarea"
+          @on-change="changeScript"
+        />
       </div>
 
-      <div v-show="propertyObj.type == 'bpmn:EndEvent'">
-        <div>
-          <label>id</label>
-          <span>{{ propertyObj.id }}</span>
-        </div>
-        <div>
-          <p class="margin1">名称</p>
-          <Input placeholder="名称" />
-        </div>
+      <div>
+        <p class="margin1">Result Variable</p>
+        <Input
+          v-model="propertyObj.resultVariable"
+          @on-change="changeProperty($event, resultVariableType)"
+          placeholder="结果变量"
+        />
+      </div>
+    </div>
+
+    <div v-show="propertyObj.type == 'bpmn:ExclusiveGateway'">
+      <div>
+        <label>id</label>
+        <span>{{ propertyObj.id }}</span>
+      </div>
+      <div>
+        <p class="margin1">名称</p>
+        <Input placeholder="名称" />
+      </div>
+      <div>
+        <p class="margin1">监听</p>
+        <Input placeholder="条件" />
+      </div>
+    </div>
+
+    <div v-show="propertyObj.type == 'bpmn:EndEvent'">
+      <div>
+        <label>id</label>
+        <span>{{ propertyObj.id }}</span>
+      </div>
+      <div>
+        <p class="margin1">名称</p>
+        <Input placeholder="名称" />
       </div>
     </div>
 
@@ -274,7 +305,11 @@
 <script>
 import OrgUserSelector from "../../sub_components/orgUserSelector";
 import { START_EVENT } from "bpmn-js/lib/features/replace/ReplaceOptions.js";
-import { getAllEntities, getViews, getEntitiesOperations } from "@/api/others.js";
+import {
+  getAllEntities,
+  getViews,
+  getEntitiesOperations,
+} from "@/api/others.js";
 export default {
   name: "PropertiesView",
   props: {
@@ -297,8 +332,9 @@ export default {
       operations: null,
       candidateUsersType: "candidateUsers",
       candidateGroupsType: "candidateGroups",
-      scriptFormatType :"scriptFormat",
-      resultVariableType :"camunda:resultVariable",
+      scriptFormatType: "scriptFormat",
+      resultVariableType: "camunda:resultVariable",
+      isExecuteType: "isExecutable",
       haveAdvancedProperties: true,
       scrollHeight: 1000,
       processEditPanel: false,
@@ -322,15 +358,15 @@ export default {
         { label: "UserTask", value: "bpmn:UserTask" },
       ],
       taskType: "",
-      serviceTaskImpl:{
-        name:''
+      serviceTaskImpl: {
+        name: "",
       },
-      serviceTaskImplList:[
-        {name : 'Expression'}, {name : 'External'}, {name : 'connector'}
+      serviceTaskImplList: [
+        { name: "Expression" },
+        { name: "External" },
+        { name: "connector" },
       ],
-      scriptFormats:[
-        {language:'groovy'}, {language: 'javascript'}
-      ],
+      scriptFormats: [{ language: "groovy" }, { language: "javascript" }],
       participantCol: [
         {
           title: "类型",
@@ -506,22 +542,25 @@ export default {
       this.loadOperations();
     },
 
-    loadOperations(){
+    loadOperations() {
       let that = this;
       that.operations = [];
-      getEntitiesOperations(this.propertyObj.selectedClass).then(res=>{
-          if(res.data.success){
-            console.log(res.data);
-            let opr = res.data.data.queryOprConfigs;
-            for(var i=0; i< opr.length; i++){
-                var implementType = opr[i].implementType;
-                if( implementType == "serverScript" || implementType == "clientScript"){
-                    that.operations.push(opr[i]);
-                    }
-                }
+      getEntitiesOperations(this.propertyObj.selectedClass).then((res) => {
+        if (res.data.success) {
+          console.log(res.data);
+          let opr = res.data.data.queryOprConfigs;
+          for (var i = 0; i < opr.length; i++) {
+            var implementType = opr[i].implementType;
+            if (
+              implementType == "serverScript" ||
+              implementType == "clientScript"
+            ) {
+              that.operations.push(opr[i]);
             }
-          })
-        },
+          }
+        }
+      });
+    },
 
     changeElementName(event) {
       let elementName = event.target.value;
@@ -538,14 +577,28 @@ export default {
       console.log("propertyObj", this.propertyObj);
     },
 
+    changeDescirption(event) {
+      let description = event.target.value;
+      
+      const elementRegistry = this.modeler.get("elementRegistry");
+      const process = elementRegistry.get(this.propertyObj.id);
+
+      var documentation = this.moddle.create("bpmn:Documentation");
+      documentation.text = description;
+
+      this.modeling.updateProperties(process, {
+        extensionElements: documentation,
+      });
+    },
+
     changeExpression(event) {
       let expression = event.target.value;
       console.log("expression", expression);
-      
+
       const elementRegistry = this.modeler.get("elementRegistry");
       const SequenceFlow = elementRegistry.get(this.propertyObj.id);
       var conditionExpression = this.moddle.create("bpmn:FormalExpression", {
-        body: expression, 
+        body: expression,
       });
 
       this.modeling.updateProperties(SequenceFlow, {
@@ -553,7 +606,7 @@ export default {
       });
     },
 
-    changeScript(event){
+    changeScript(event) {
       let scriptStr = event.target.value;
       console.log("script", scriptStr);
 
@@ -564,19 +617,26 @@ export default {
       this.modeling.updateProperties(scriptTask, {
         script: scriptStr,
       });
-
-    },    
-
-    changeOperation(operation, operationType){
-        let that = this;
-        if(operationType=="before"){
-          this.updateCamundaProperty(this.propertyObj.id, "beforeOperation", operation);
-        }else if (operationType == "after"){
-           this.updateCamundaProperty(this.propertyObj.id, "afterOperation", operation);
-        } 
     },
 
-    changeProperty(event, type){
+    changeOperation(operation, operationType) {
+      let that = this;
+      if (operationType == "before") {
+        this.updateCamundaProperty(
+          this.propertyObj.id,
+          "beforeOperation",
+          operation
+        );
+      } else if (operationType == "after") {
+        this.updateCamundaProperty(
+          this.propertyObj.id,
+          "afterOperation",
+          operation
+        );
+      }
+    },
+
+    changeProperty(event, type) {
       console.log(event, type);
       const value = event;
 
@@ -586,7 +646,7 @@ export default {
       this.updateProperties(properties);
     },
 
-    changeTimerDefinition(event){
+    changeTimerDefinition(event) {
       let timeDuration = event.target.value;
       console.log("timeDuration", timeDuration);
 
@@ -594,16 +654,16 @@ export default {
       const boundaryEvent = elementRegistry.get(this.propertyObj.id);
       console.log("boudaryEvent", boundaryEvent);
       console.log(boundaryEvent.businessObject.eventDefinitions[0]);
-      const timerEventDefinition = boundaryEvent.businessObject.eventDefinitions[0];
-      console.log(timerEventDefinition); 
-      var formalExpression  = this.moddle.create("bpmn:FormalExpression", {
+      const timerEventDefinition =
+        boundaryEvent.businessObject.eventDefinitions[0];
+      console.log(timerEventDefinition);
+      var formalExpression = this.moddle.create("bpmn:FormalExpression", {
         body: timeDuration,
       });
 
-      formalExpression.$parent = timerEventDefinition
+      formalExpression.$parent = timerEventDefinition;
 
       timerEventDefinition.set("timeDuration", formalExpression);
-
     },
 
     changeSelectedView(value) {
@@ -664,7 +724,6 @@ export default {
         extensionElements = this.moddle.create("bpmn:ExtensionElements", {
           values: [camundaProperties],
         });
-
       } else {
         const newProperties = this.moddle.createAny("camunda:properties");
         const newProperty = this.moddle.createAny("camunda:property");
