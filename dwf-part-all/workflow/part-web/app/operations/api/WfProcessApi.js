@@ -27,6 +27,10 @@ export const getAllTemplates =()=> {
   return axios.get(`${baseObjOther}/workflow/buildtime/all-process-templates`).then(res => res.data);
 };
 
+export const getTemplateById = (templateId) => {
+    return axios.get(`${baseObjOther}/workflow/buildtime/get-template/${templateId}`).then(res => res.data);
+}
+
 // 删除未发布的流程模版
 export const deleteTemplate = (templateId) => {
   return axios.post(`${baseObjOther}/workflow/buildtime/delete-process-template/${templateId}`).then( res => res.data);
@@ -38,19 +42,24 @@ export const deleteRlTemplate = (templateId) => {
 };
 
 // 发布一个流程流程模版
-export const releaseTemplate = (rltemplate) => {
-  return axios.post(`${baseObjOther}/workflow/buildtime/release-process-template`,rltemplate).then( res => res.data);
+export const releaseTemplate = (processDefinitionId) => {
+  return axios.post(`${baseObjOther}/workflow/buildtime/release-process-template/${processDefinitionId}`,processDefinitionId).then( res => res.data);
 };
 
 // 
 export const startupProcess = () => {
     return axios.post(`${baseObjOther}/workflow/runtime/startup-process-engine`).then(res => res.data);
 };
-// 获取用户的已发布流程模版列表
-// process-templates/{userId}
+// 获取所有已发布流程模版列表
+// 
 export const getRlTemplates = (userId) => {
-    return axios.get(`${baseObjOther}/workflow/administrate/released-process-templates/${userId}`).then(res => res.data);
+    return axios.get(`${baseObjOther}/workflow/administrate/all-released-process-templates/${userId}`).then(res => res.data);
 };
+
+/* export const getRlTemplates = (userId) => {
+    return axios.get(`${baseObjOther}/workflow/administrate/all-released-process-templates/${userId}`).then(res => res.data);
+}; */
+
 // 获取已发布的流程模版的起始表单
 export const getLaunchForm = (templateId) => {
     return axios.get(`${baseObjOther}/workflow/runtime/released-template/${templateId}/launch-form`).then(res => res.data);

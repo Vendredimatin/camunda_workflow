@@ -1,0 +1,11 @@
+CodePart:
+  part:
+    name: part01
+  part-svc:
+    app: {}
+    common: {}
+    modeler: {}
+  part-web:
+    app: {}
+    common: {}
+    modeler: {}

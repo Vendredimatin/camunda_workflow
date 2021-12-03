@@ -55,7 +55,7 @@ export default {
               if(this.havelauncher) {
                 this.orgUserList.unshift({'type':'launcher','label':"流程发起人",'value':'000000000'});
               }
-              // console.log("this.orgUserList",this.orgUserList);
+              console.log("this.orgUserList",this.orgUserList);
           });
     },
   
